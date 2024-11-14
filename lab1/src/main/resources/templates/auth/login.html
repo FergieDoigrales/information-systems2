@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="login-container">
+    <h2>Login</h2>
+    <form th:action="@{/auth/login}" method="post">
+        <div>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div>
+            <button type="submit">Login</button>
+        </div>
+        <div>
+            <p>Don't have an account? <a th:href="@{/register}">Register here</a></p>
+        </div>
+    </form>
+
+    <!-- Error message if login fails -->
+    <div th:if="${param.error}" class="error">
+        <p>Invalid username or password.</p>
+    </div>
+
+    <!-- Logout message -->
+    <div th:if="${param.logout}" class="logout">
+        <p>You have been logged out successfully.</p>
+    </div>
+</div>
+
+<!--</body>-->
+<!--</html>-->
+<!--<script>-->
+<!--    document.getElementById('login-form').addEventListener('submit', function(event) {-->
+<!--        event.preventDefault();-->
+<!--        const username = document.getElementById('username').value;-->
+<!--        const password = document.getElementById('password').value;-->
+
+<!--        fetch('/auth/login', {-->
+<!--            method: 'POST',-->
+<!--            headers: {-->
+<!--                'Content-Type': 'application/json'-->
+<!--            },-->
+<!--            body: JSON.stringify({ username, password })-->
+<!--        })-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => {-->
+<!--                if (data.token) {-->
+<!--                    localStorage.setItem('jwt-token', data.token);-->
+<!--                    window.location.href = '/home';-->
+<!--                } else {-->
+<!--                    alert('Login failed');-->
+<!--                }-->
+<!--            });-->
+<!--    });-->
+<!--</script>-->
+
+
