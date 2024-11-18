@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/studs
+    username: s367900
+    password: NHuAaqTUhW4OskIS
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    properties:
+      javax:
+        persistence:
+          provider: org.eclipse.persistence.jpa.PersistenceProvider
+      eclipselink:
+        ddl-generation: update
+        ddl-generation.output-mode: database
+        weaver.disable: true
+        cache.shared.default: false
+#logging:
+#  level:
+#    org:
+#      springframework: trace

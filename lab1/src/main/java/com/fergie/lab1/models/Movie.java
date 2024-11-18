@@ -17,10 +17,10 @@ import java.util.Date;
 @Table(name = "movie")
 @Entity
 public class Movie {
-    @Column(name = "movie_id") //???
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
+    @Column(name = "movie_id") //???
+    private Long movieId; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
 
     @Column
     @NotNull(message="field cannot be null")
@@ -32,7 +32,7 @@ public class Movie {
     @JoinColumn(name = "coordinates_id")
     private Coordinates coordinates; //Поле не может быть null
 
-    @Column
+    @Column(name = "creation_date")
     @NotNull(message="field cannot be null")
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически

@@ -2,9 +2,336 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Home</title>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
-<body>
-<h1>Пофиг тебе, да?</h1>
-<a href="/auth/logout">Logout.</a>
+<body th:attr="data-open-modal=${openModal}">
+<h1>MovieStorage</h1>
+<button class="open-modal" data-modal="createMovieModal">Create Movie</button>
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Author</th>
+        <th>Creation Date</th>
+        <th>Coordinates</th>
+        <th>Oscars Count</th>
+        <th>Budget</th>
+        <th>Total Box Office</th>
+        <th>MPAA Rating</th>
+        <th>Length</th>
+        <th>Golden Palm Count</th>
+        <th>Genre</th>
+        <th>Director</th>
+        <th>Director eye color</th>
+        <th>Director hair color</th>
+        <th>Director location</th>
+        <th>Director passportID</th>
+        <th>Director nationality</th>
+        <th>Operator</th>
+        <th>Operator eye color</th>
+        <th>Operator hair color</th>
+        <th>Operator location</th>
+        <th>Operator passportID</th>
+        <th>Operator nationality</th>
+        <th>Screenwriter</th>
+        <th>Screenwriter eye color</th>
+        <th>Screenwriter hair color</th>
+        <th>Screenwriter location</th>
+        <th>Screenwriter passportID</th>
+        <th>Screenwriter nationality</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="movie : ${moviePage.content}">
+        <td th:text="${movie.name}">Name</td>
+        <td th:text="${movie.authorID}">Author</td>
+        <td th:text="${movie.creationDate}">Creation Date</td>
+        <td th:text="${movie.coordinates.x + '; ' + movie.coordinates.y}">Coordinates</td>
+        <td th:text="${movie.oscarsCount}">Oscars Count</td>
+        <td th:text="${movie.budget}">Budget</td>
+        <td th:text="${movie.totalBoxOffice}">Total Box Office</td>
+        <td th:text="${movie.mpaaRating}">MPAA Rating</td>
+        <td th:text="${movie.length}">Length</td>
+        <td th:text="${movie.goldenPalmCount}">Golden Palm Count</td>
+        <td th:text="${movie.genre}">Genre</td>
+        <td th:text="${movie.director.name}">Director</td>
+        <td th:text="${movie.director.eyeColor}">Director eye color</td>
+        <td th:text="${movie.director.hairColor}">Director hair color</td>
+        <td th:text="${movie.director.location.x + '; ' + movie.director.location.y  + '; ' + movie.director.location.z }">Director location</td>
+        <td th:text="${movie.director.passportID}">Director passportID</td>
+        <td th:text="${movie.director.nationality}">Director nationality</td>
+        <td th:text="${movie.operator.name}">Operator</td>
+        <td th:text="${movie.operator.eyeColor}">Operator eye color</td>
+        <td th:text="${movie.operator.hairColor}">Operator hair color</td>
+        <td th:text="${movie.operator.location.x + '; ' + movie.operator.location.y  + '; ' + movie.operator.location.z }">Operator location</td>
+        <td th:text="${movie.operator.passportID}">Operator passportID</td>
+        <td th:text="${movie.operator.nationality}">Operator nationality</td>
+        <td th:text="${movie.screenwriter.name}">Screenwriter</td>
+        <td th:text="${movie.screenwriter.eyeColor}">Screenwriter eye color</td>
+        <td th:text="${movie.screenwriter.hairColor}">Screenwriter hair color</td>
+        <td th:text="${movie.screenwriter.location.x + '; ' + movie.screenwriter.location.y  + '; ' + movie.screenwriter.location.z }">Screenwriter location</td>
+        <td th:text="${movie.screenwriter.passportID}">Screenwriter passportID</td>
+        <td th:text="${movie.screenwriter.nationality}">Screenwriter nationality</td>
+    </tr>
+    </tbody>
+</table>
+
+<div>
+    <a th:if="${moviePage.hasPrevious()}" th:href="@{/home(page=${moviePage.number - 1}, size=${moviePage.size})}">Previous</a>
+    <span>Page <span th:text="${moviePage.number + 1}">1</span> of <span th:text="${moviePage.totalPages}">1</span></span>
+    <a th:if="${moviePage.hasNext()}" th:href="@{/home(page=${moviePage.number + 1}, size=${moviePage.size})}">Next</a>
+</div>
+
+<div id="createMovieModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Create a New Movie</h2>
+        <form th:action="@{/movie/save}" method="post" th:object="${movie}">
+            <label for="name">Name:</label>
+            <input type="text" id="name" th:field="*{name}" required/><br/>
+
+            <label for="coordinates">Coordinates:</label>
+            <select id="coordinates" th:field="*{coordinates.id}">
+                <option th:each="coordinate : ${coordinatesList}"
+                        th:value="${coordinate.id}"
+                        th:text="${coordinate.x + ', ' + coordinate.y}">Coordinates</option>
+            </select>
+            or
+            <button type="button" class="open-modal" data-modal="createCoordinatesModal">Create Coordinates</button><br/>
+
+            <label for="oscarsCount">Oscars Count:</label>
+            <input type="number" id="oscarsCount" th:field="*{oscarsCount}" required/><br/>
+
+            <label for="budget">Budget:</label>
+            <input type="number" id="budget" th:field="*{budget}" step="0.01" required/><br/>
+
+            <label for="totalBoxOffice">Total Box Office:</label>
+            <input type="number" id="totalBoxOffice" th:field="*{totalBoxOffice}" step="0.01" required/><br/>
+
+            <label for="mpaaRating">MPAA Rating:</label>
+            <select id="mpaaRating" th:field="*{mpaaRating}">
+                <option th:each="rating : ${mpaaRatings}" th:value="${rating}" th:text="${rating}">Rating</option>
+            </select><br/>
+
+            <label for="director">Director:</label>
+            <select id="director" th:field="*{director.id}">
+                <option th:each="person : ${personsList}" th:value="${person.id}" th:text="${person.name}">Person</option>
+            </select>
+            or
+            <button type="button" class="open-modal" data-modal="createPersonModal">Create Person</button><br/>
+
+            <label for="screenwriter">Screenwriter:</label>
+            <select id="screenwriter" th:field="*{screenwriter.id}">
+                <option th:each="person : ${personsList}" th:value="${person.id}" th:text="${person.name}">Person</option>
+            </select>
+            or
+            <button type="button" class="open-modal" data-modal="createPersonModal">Create Person</button><br/>
+
+            <label for="operator">Operator:</label>
+            <select id="operator" th:field="*{operator.id}" required>
+                <option th:each="person : ${personsList}" th:value="${person.id}" th:text="${person.name}">Person</option>
+            </select>
+            or
+            <button type="button" class="open-modal" data-modal="createPersonModal">Create Person</button><br/>
+
+            <label for="length">Length:</label>
+            <input type="number" id="length" th:field="*{length}" step="1"/><br/>
+
+            <label for="goldenPalmCount">Golden Palm Count:</label>
+            <input type="number" id="goldenPalmCount" th:field="*{goldenPalmCount}" step="1"/><br/>
+
+            <label for="genre">Genre:</label>
+            <select id="genre" th:field="*{genre}">
+                <option th:each="genre : ${genres}" th:value="${genre}" th:text="${genre}">Genre</option>
+            </select><br/>
+
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+
+<div id="createPersonModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Create a New Person</h2>
+        <form th:action="@{/person/save}" method="post" th:object="${person}">
+            <input type="hidden" name="parentModal" value="createMovieModal"/>
+            <label for="personname">Name:</label>
+            <input type="text" id="personname" th:field="*{name}" required/><br/>
+
+            <label for="location">Location:</label>
+            <select id="location" th:field="*{location.id}">
+                <option th:each="location : ${locationsList}"
+                        th:value="${location.id}"
+                        th:text="${location.x + ', ' + location.y + ', ' + location.z}">Coordinates</option>
+            </select>
+            or
+            <button type="button" class="open-modal" data-modal="createLocationModal">Create Location</button><br/>
+
+
+            <label for="passportID">passportID:</label>
+            <input type="number" id="passportID" th:field="*{passportID}" step="0.01" required/><br/>
+
+
+            <label for="eyeColor">eye color:</label>
+            <select id="eyeColor" th:field="*{eyeColor}">
+                <option th:each="color : ${colors}" th:value="${color}" th:text="${color}">Color</option>
+            </select><br/>
+
+            <label for="hairColor">hair color:</label>
+            <select id="hairColor" th:field="*{hairColor}">
+                <option th:each="color : ${colors}" th:value="${color}" th:text="${color}">Color</option>
+            </select><br/>
+
+            <label for="nationality">Genre:</label>
+            <select id="nationality" th:field="*{nationality}">
+                <option th:each="nationality : ${nationalities}" th:value="${nationality}" th:text="${nationality}">Nationality</option>
+            </select><br/>
+
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+<div id="createLocationModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Create a New Location</h2>
+        <form th:action="@{/location/save}" method="post" th:object="${location}">
+
+            <label for="x">x:</label>
+            <input type="number" id="x" th:field="*{x}" step="0.01" required/><br/>
+
+            <label for="y">y:</label>
+            <input type="number" id="y" th:field="*{y}" step="0.01" required/><br/>
+
+            <label for="z">z:</label>
+            <input type="number" id="z" th:field="*{z}" step="0.01" required/><br/>
+
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+<div id="createCoordinatesModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Create a New Coordinates</h2>
+        <form th:action="@{/coordinates/save}" method="post" th:object="${coordinates}">
+
+            <label for="x">x:</label>
+            <input type="number" id="coord_x" th:field="*{x}" step="0.01" required/><br/>
+
+            <label for="y">y:</label>
+            <input type="number" id="coord_y" th:field="*{y}" step="0.01" required/><br/>
+
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Функция открытия модального окна
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (!modal) return; // Проверяем, существует ли модальное окно
+        modal.style.display = "block";
+
+        const closeBtn = modal.querySelector(".close");
+        if (closeBtn) {
+            closeBtn.onclick = function () {
+                modal.style.display = "none";
+            };
+        }
+
+        // Закрытие модального окна при клике вне его области
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+    }
+
+    // Обработка кликов по кнопкам для открытия модальных окон
+    document.querySelectorAll(".open-modal").forEach(button => {
+        button.addEventListener("click", (event) => {
+            const modalId = button.getAttribute("data-modal");
+            openModal(modalId);
+        });
+    });
+
+    // Открытие модального окна при загрузке страницы, если указано в атрибуте data-open-modal
+    window.onload = function () {
+        const openModalId = document.body.getAttribute("data-open-modal");
+        if (openModalId) {
+            openModal(openModalId);
+        }
+    };
+
+    // function openModal(modalId) {
+    //     const modal = document.getElementById(modalId);
+    //     modal.style.display = "block";
+    //
+    //     const closeBtn = modal.querySelector(".close");
+    //     if (closeBtn) {
+    //         closeBtn.onclick = function () {
+    //             modal.style.display = "none";
+    //         };
+    //     }
+    //
+    //     window.onclick = function (event) {
+    //         if (event.target === modal) {
+    //             modal.style.display = "none";
+    //         }
+    //     };
+    // }
+    //
+    // document.querySelectorAll(".open-modal").forEach(button => {
+    //     button.addEventListener("click", (event) => {
+    //         const modalId = button.getAttribute("data-modal");
+    //         openModal(modalId);
+    //     });
+    // });
+
+</script>
+
+
+
 </body>
 </html>

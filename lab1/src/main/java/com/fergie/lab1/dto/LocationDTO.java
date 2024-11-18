@@ -8,7 +8,6 @@ import lombok.Setter;
 @Getter
 public class LocationDTO {
 
-    @NotNull(message="field cannot be null")
     private Double x; //Поле не может быть null
 
     private float y;

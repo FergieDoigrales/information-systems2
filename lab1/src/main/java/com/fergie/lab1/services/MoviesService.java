@@ -1,12 +1,18 @@
 package com.fergie.lab1.services;
 
 import com.fergie.lab1.models.Movie;
-import com.fergie.lab1.models.enums.AccessRole;
+import com.fergie.lab1.models.enums.*;
 import com.fergie.lab1.repositories.MoviesRepository;
 import com.fergie.lab1.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,9 +37,14 @@ public class MoviesService {
         return movie.orElse(null);
     }
 
-    public List<Movie> findAll(){
-        return moviesRepository.findAll();
+//    public List<Movie> findAll(){
+//        return moviesRepository.findAll();
+//    }
+    public Page<Movie> findAll(Pageable pageable) {
+        return moviesRepository.findAll(pageable);
     }
+
+    @Transactional
     public Movie addMovie(Movie movie) {
         return moviesRepository.save(enrichMovie(movie));
     }

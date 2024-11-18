@@ -8,9 +8,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "сoordinates")
+@Table(name = "coordinates")
 public class Coordinates {
-    @Column(name = "сoordinates_id") //???
+    @Column(name = "coordinates_id") //???
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

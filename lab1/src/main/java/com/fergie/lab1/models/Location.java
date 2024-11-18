@@ -26,5 +26,5 @@ public class Location {
     private long z;
 
     @Column(name = "author_id")
-    private Long author_ID;
+    private Long authorID;
 }

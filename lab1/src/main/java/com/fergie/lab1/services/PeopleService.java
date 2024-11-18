@@ -34,8 +34,10 @@ public class PeopleService {
     public List<Person> findAll(){
         return peopleRepository.findAll();
     }
-    public Person addPerson(Person person) {
-        return peopleRepository.save(enrichPerson(person));
+
+    @Transactional
+    public Person addPerson(Person person, Long authorId) {
+        return peopleRepository.save(enrichPerson(person, authorId));
     }
 
     @Transactional
@@ -53,6 +55,7 @@ public class PeopleService {
             person.setLocation(updatedPerson.getLocation());
             person.setPassportID(updatedPerson.getPassportID());
             person.setNationality(updatedPerson.getNationality());
+
 
             return peopleRepository.save(person);
         } else {
@@ -72,8 +75,8 @@ public class PeopleService {
         }
     }
 
-    private Person enrichPerson(Person person) { //как получить Id автора
-//        person.setAuthorID(user.getId());
+    private Person enrichPerson(Person person, Long authorId) { //как получить Id автора
+        person.setAuthorID(authorId);
         return person;
     }
 

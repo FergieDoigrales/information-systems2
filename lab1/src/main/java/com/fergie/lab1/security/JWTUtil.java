@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Component
 public class JWTUtil {
-    @Value("${jwt_secret}") //из application.properties
+    @Value("FERGIEakssaksd") //из application.properties
     private String secret;
     public String generateToken(String username) {
         Date expirationDate = new Date(System.currentTimeMillis() + 3600000); //час
