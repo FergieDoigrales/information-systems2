@@ -59,7 +59,7 @@ public class PeopleService {
 
             return peopleRepository.save(person);
         } else {
-            return null; // если пользователь не найден
+            return null;
         }
     }
 

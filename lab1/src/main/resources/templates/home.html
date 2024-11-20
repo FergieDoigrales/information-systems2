@@ -3,6 +3,36 @@
 <head>
     <title>Home</title>
     <style>
+        .header {
+            background-color: #ffc0cb;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .header .user-info span {
+            margin-right: 20px;
+        }
+
+        .header .user-info a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: #000;
+            padding: 5px 10px;
+            border: 1px solid #000;
+            border-radius: 5px;
+        }
+
+        .header .user-info a:hover {
+            background-color: #ff69b4;
+            color: #fff;
+        }
         .modal {
             display: none;
             position: fixed;
@@ -36,12 +66,58 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .styled-table {
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: Arial, sans-serif;
+            width: 100%;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .styled-table thead tr {
+            background-color: #ffcbd3;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+            border: 1px solid #dddddd;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #ffcdd2;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #ffeaed;
+        }
+
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #d81b60;
+        }
+
+        .styled-table tbody tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
     </style>
+
 </head>
 <body th:attr="data-open-modal=${openModal}">
-<h1>MovieStorage</h1>
+<div class="header">
+    <h1>MovieStorage</h1>
+    <div class="user-info">
+        <span th:text="${username}">Username</span>
+        <a th:href="@{/auth/logout}">Logout</a>
+        <!--        <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/admin/panel}">Admin Panel</a>-->
+    </div>
+</div>
+<!--<h1>MovieStorage</h1>-->
 <button class="open-modal" data-modal="createMovieModal">Create Movie</button>
-<table>
+<table class="styled-table">
     <thead>
     <tr>
         <th>Name</th>
@@ -107,6 +183,14 @@
         <td th:text="${movie.screenwriter.location.x + '; ' + movie.screenwriter.location.y  + '; ' + movie.screenwriter.location.z }">Screenwriter location</td>
         <td th:text="${movie.screenwriter.passportID}">Screenwriter passportID</td>
         <td th:text="${movie.screenwriter.nationality}">Screenwriter nationality</td>
+        <td>
+            <button th:if="${movie.authorID == currentUserId || userRole == 'ROLE_ADMIN'}"
+                    th:attr="data-id=${movie.movieId}"
+                    class="edit-movie-button">Edit</button>
+            <button th:if="${movie.authorID == currentUserId || userRole == 'ROLE_ADMIN'}"
+                    th:attr="data-id=${movie.movieId}"
+                    class="delete-movie-button">Delete</button>
+        </td>
     </tr>
     </tbody>
 </table>
@@ -122,6 +206,7 @@
         <span class="close">&times;</span>
         <h2>Create a New Movie</h2>
         <form th:action="@{/movie/save}" method="post" th:object="${movie}">
+            <input type="hidden" th:field="*{movieId}" />
             <label for="name">Name:</label>
             <input type="text" id="name" th:field="*{name}" required/><br/>
 
@@ -244,7 +329,7 @@
             <label for="z">z:</label>
             <input type="number" id="z" th:field="*{z}" step="0.01" required/><br/>
 
-            <button type="submit">Save</button>
+            <button type="submit" id="savePersonBtn">Save</button>
         </form>
     </div>
 </div>
@@ -267,42 +352,261 @@
 </div>
 
 <script>
-    function openModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (!modal) return;
-        modal.style.display = "block";
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".open-modal").forEach(button => {
+            button.addEventListener("click", (event) => {
+                const modalId = button.getAttribute("data-modal");
+                openModal(modalId);
+            });
+        });
 
-        const closeBtn = modal.querySelector(".close");
-        if (closeBtn) {
-            closeBtn.onclick = function () {
-                modal.style.display = "none";
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            modal.style.display = "block";
+
+            const closeBtn = modal.querySelector(".close");
+            if (closeBtn) {
+                closeBtn.onclick = function () {
+                    modal.style.display = "none";
+                };
+            }
+
+            window.onclick = function (event) {
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
             };
         }
 
-        window.onclick = function (event) {
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        };
-    }
+        // Movie
+        const movieForm = document.querySelector("#createMovieModal form");
+        if (movieForm) {
+            movieForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                const formData = new FormData(movieForm);
 
-    document.querySelectorAll(".open-modal").forEach(button => {
-        button.addEventListener("click", (event) => {
-            const modalId = button.getAttribute("data-modal");
-            openModal(modalId);
+                fetch(movieForm.getAttribute("action"), {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // alert("Movie saved successfully!");
+                            document.getElementById("createMovieModal").style.display = "none";
+                        } else {
+                            alert(data.message || "Failed to save movie.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error saving movie:", error);
+                        alert("An error occurred while saving the movie.");
+                    });
+            });
+        }
+
+        document.querySelectorAll(".edit-movie-button").forEach(button => {
+            button.addEventListener("click", function () {
+                const movieId = this.getAttribute("data-id");
+                fetch(`/movie/${movieId}`)
+                    .then(response => response.json())
+                    .then(movie => {
+                        if (movie) {
+                            const modal = document.getElementById("createMovieModal");
+                            modal.style.display = "block";
+                            modal.style.display = "block";
+                            const closeBtn = modal.querySelector(".close");
+                            if (closeBtn) {
+                                closeBtn.onclick = function () {
+                                    modal.style.display = "none";
+                                };
+                            }
+
+                            window.onclick = function (event) {
+                                if (event.target === modal) {
+                                    modal.style.display = "none";
+                                }
+                            };
+                            document.querySelector("#createMovieModal form").setAttribute("action", "/movie/update");
+
+
+                            document.querySelector("#movieId").value = movie.movieId;
+                            document.querySelector("#name").value = movie.name;
+                            document.querySelector("#coordinates").value = movie.coordinates.id;
+                            document.querySelector("#oscarsCount").value = movie.oscarsCount;
+                            document.querySelector("#budget").value = movie.budget;
+                            document.querySelector("#totalBoxOffice").value = movie.totalBoxOffice;
+                            document.querySelector("#mpaaRating").value = movie.mpaaRating;
+                            document.querySelector("#director").value = movie.director.id;
+                            document.querySelector("#screenwriter").value = movie.screenwriter.id;
+                            document.querySelector("#operator").value = movie.operator.id;
+                            document.querySelector("#length").value = movie.length;
+                            document.querySelector("#goldenPalmCount").value = movie.goldenPalmCount;
+                            document.querySelector("#genre").value = movie.genre;
+                        }
+                    })
+                    .catch(error => console.error("Error fetching movie:", error));
+            });
         });
+
+        document.querySelectorAll(".delete-movie-button").forEach(button => {
+            button.addEventListener("click", function () {
+                const movieId = this.getAttribute("data-id");
+                if (confirm("Are you sure you want to delete this movie?")) {
+                    fetch(`/movie/${movieId}`, { method: "DELETE" })
+                        .then(response => {
+                            if (response.ok) {
+                                alert("Movie deleted successfully");
+                                location.reload();
+                            } else {
+                                alert("Failed to delete movie");
+                            }
+                        })
+                        .catch(error => console.error("Error deleting movie:", error));
+                }
+            });
+        });
+
+        // Person
+        const personForm = document.querySelector("#createPersonModal form");
+        if (personForm) {
+            personForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                const formData = new FormData(personForm);
+
+                fetch(personForm.getAttribute("action"), {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // alert("Person saved successfully!");
+                            document.getElementById("createPersonModal").style.display = "none";
+                            openModal("createMovieModal");
+                            updatePersonsList(data.updatedPersonsList);
+                        } else {
+                            alert(data.message || "Failed to save person.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error saving person:", error);
+                        alert("An error occurred while saving the person.");
+                    });
+            });
+
+            function updatePersonsList(persons) {
+                const selectors = ["#director", "#screenwriter", "#operator"];
+
+                selectors.forEach(selector => {
+                    const selectElement = document.querySelector(selector);
+                    if (selectElement) {
+                        selectElement.innerHTML = persons
+                            .map(person => `<option value="${person.id}">${person.name}</option>`)
+                            .join("");
+                    }
+                });
+            }
+        }
+
+        // Coordinates
+        const coordinatesForm = document.querySelector("#createCoordinatesModal form");
+        if (coordinatesForm) {
+            coordinatesForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                const formData = new FormData(coordinatesForm);
+
+                fetch(coordinatesForm.getAttribute("action"), {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert("Coordinates saved successfully!");
+                            document.getElementById("createCoordinatesModal").style.display = "none";
+                            updateCoordinatesList(data.updatedCoordinatesList);
+                        } else {
+                            alert(data.message || "Failed to save coordinates.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error saving coordinates:", error);
+                        alert("An error occurred while saving the coordinates.");
+                    });
+            });
+
+            function updateCoordinatesList(coordinates) {
+                const coordinatesSelect = document.querySelector("#coordinates");
+                if (coordinatesSelect) {
+                    coordinatesSelect.innerHTML = coordinates
+                        .map(coordinate => `<option value="${coordinate.id}">${coordinate.x}, ${coordinate.y}</option>`)
+                        .join("");
+                }
+            }
+        }
+
+        // Location
+        const locationForm = document.querySelector("#createLocationModal form");
+        if (locationForm) {
+            locationForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                const formData = new FormData(locationForm);
+
+                fetch(locationForm.getAttribute("action"), {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert("Location saved successfully!");
+                            document.getElementById("createLocationModal").style.display = "none";
+                            updateLocationsList(data.updatedLocationsList);
+                        } else {
+                            alert(data.message || "Failed to save location.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error saving location:", error);
+                        alert("An error occurred while saving the location.");
+                    });
+            });
+
+            function updateLocationsList(locations) {
+                const locationsSelect = document.querySelector("#location");
+                if (locationsSelect) {
+                    locationsSelect.innerHTML = locations
+                        .map(location => `<option value="${location.id}">${location.x}, ${location.y}, ${location.z}</option>`)
+                        .join("");
+                }
+            }
+        }
     });
 
-    window.onload = function () {
-        const openModalId = document.body.getAttribute("data-open-modal");
-        if (openModalId) {
-            openModal(openModalId);
-        }
-    };
 
 </script>
-
-
 
 </body>
 </html>

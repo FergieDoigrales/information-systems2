@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-<div class="login-container">
+<div class="container">
     <h2>Login</h2>
     <form th:action="@{/auth/login}" method="post">
         <div>
@@ -21,46 +21,19 @@
             <button type="submit">Login</button>
         </div>
         <div>
-            <p>Don't have an account? <a th:href="@{/register}">Register here</a></p>
+            <p>Don't have an account? <a th:href="@{/auth/register}">Register here</a></p>
         </div>
     </form>
 
-    <!-- Error message if login fails -->
     <div th:if="${param.error}" class="error">
         <p>Invalid username or password.</p>
     </div>
 
-    <!-- Logout message -->
     <div th:if="${param.logout}" class="logout">
         <p>You have been logged out successfully.</p>
     </div>
 </div>
 
-<!--</body>-->
-<!--</html>-->
-<!--<script>-->
-<!--    document.getElementById('login-form').addEventListener('submit', function(event) {-->
-<!--        event.preventDefault();-->
-<!--        const username = document.getElementById('username').value;-->
-<!--        const password = document.getElementById('password').value;-->
 
-<!--        fetch('/auth/login', {-->
-<!--            method: 'POST',-->
-<!--            headers: {-->
-<!--                'Content-Type': 'application/json'-->
-<!--            },-->
-<!--            body: JSON.stringify({ username, password })-->
-<!--        })-->
-<!--            .then(response => response.json())-->
-<!--            .then(data => {-->
-<!--                if (data.token) {-->
-<!--                    localStorage.setItem('jwt-token', data.token);-->
-<!--                    window.location.href = '/home';-->
-<!--                } else {-->
-<!--                    alert('Login failed');-->
-<!--                }-->
-<!--            });-->
-<!--    });-->
-<!--</script>-->
 
 

@@ -57,12 +57,20 @@ public class HomeController {
     @GetMapping("/home")
     public String getMovies(Model model,
                                  @RequestParam(defaultValue = "0") int page,       // Номер страницы
-                                 @RequestParam(defaultValue = "10") int size,     // Размер страницы (по умолчанию 10)
+                                 @RequestParam(defaultValue = "9") int size,     // Размер страницы (по умолчанию 10)
                                  @RequestParam(defaultValue = "name") String sort
     ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String token = (String) authentication.getCredentials();
+//        Long userId = jwtUtil.getUserIdFromToken(token);
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        model.addAttribute("username", authentication.getName());
+        model.addAttribute("roles", authentication.getAuthorities());
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
         Page<Movie> moviePage = moviesService.findAll(pageable);
         model.addAttribute("moviePage", moviePage);
+        model.addAttribute("currentUserId", userDetails.getId());
+        model.addAttribute("UserRole", userDetails.getRole());
         return "home";
     }
 

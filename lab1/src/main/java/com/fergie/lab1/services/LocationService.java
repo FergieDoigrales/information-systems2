@@ -50,7 +50,7 @@ public class LocationService {
 
             return locationRepository.save(location);
         } else {
-            return null; // если пользователь не найден
+            return null;
         }
     }
 

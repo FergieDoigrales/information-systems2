@@ -28,7 +28,7 @@ public class Movie {
     private String name; //Поле не может быть null, Строка не может быть пустой
 
     @NotNull(message="field cannot be null")
-    @ManyToOne(cascade = CascadeType.ALL) // несколько фильмов могут быть связаны с одной и той же координатой
+    @ManyToOne
     @JoinColumn(name = "coordinates_id")
     private Coordinates coordinates; //Поле не может быть null
 
@@ -55,16 +55,16 @@ public class Movie {
     @Enumerated(EnumType.STRING)
     private MpaaRating mpaaRating; //Поле может быть null
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "director_id")
     private Person director; //Поле может быть null
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "screenwriter_id")
     private Person screenwriter;
 
     @NotNull(message="field cannot be null")
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "operator_id")
     private Person operator; //Поле не может быть null
 

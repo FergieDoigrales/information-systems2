@@ -18,7 +18,7 @@ spring:
         ddl-generation.output-mode: database
         weaver.disable: true
         cache.shared.default: false
-#logging:
-#  level:
-#    org:
-#      springframework: trace
+logging:
+  level:
+    org:
+      springframework: trace

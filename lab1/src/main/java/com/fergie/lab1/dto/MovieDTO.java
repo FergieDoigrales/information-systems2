@@ -15,6 +15,8 @@ import lombok.Setter;
 
 public class MovieDTO {
 
+    private Long MovieId;
+
     private String name; //Поле не может быть null, Строка не может быть пустой
 
     private Coordinates coordinates; //Поле не может быть null
@@ -37,5 +39,7 @@ public class MovieDTO {
     private Integer goldenPalmCount; //Значение поля должно быть больше 0, Поле может быть null
 
     private MovieGenre genre; //Поле может быть null
+
+    private Long authorID;
 
 }

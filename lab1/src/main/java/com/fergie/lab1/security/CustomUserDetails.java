@@ -1,6 +1,9 @@
 package com.fergie.lab1.security;
 
 import com.fergie.lab1.models.User;
+import com.fergie.lab1.models.enums.AccessRole;
+import com.fergie.lab1.repositories.UsersRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,23 +34,15 @@ public class CustomUserDetails implements UserDetails {
         return user.getUsername();
     }
 
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return true;
-//    }
+    public Long getId() {
+        return user.getId();
+    }
+
+    public AccessRole getRole() {
+        return user.getRole();
+    }
+
+
+
+
 }

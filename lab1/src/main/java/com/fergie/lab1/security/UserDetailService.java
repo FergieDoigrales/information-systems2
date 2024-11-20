@@ -4,6 +4,8 @@ import com.fergie.lab1.models.User;
 import com.fergie.lab1.models.enums.AccessRole;
 import com.fergie.lab1.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,14 +14,16 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
 @Service
 public class UserDetailService implements UserDetailsService {
-    private final UsersRepository usersRepository;
 
+    private final UsersRepository usersRepository;
 
     private PasswordEncoder passwordEncoder() {
         return new StandardPasswordEncoder(); //переписать на переменную экземпляра вместо метода
@@ -36,6 +40,10 @@ public class UserDetailService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
         return new CustomUserDetails(user); //
+    }
+
+    private Collection<? extends GrantedAuthority> getAuthorities(User user) {
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
     public User findById(Long userId){ //???
         Optional<User> user = usersRepository.findById(userId);

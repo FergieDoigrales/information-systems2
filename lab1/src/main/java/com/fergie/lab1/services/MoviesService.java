@@ -21,10 +21,17 @@ import java.util.Optional;
 @Service
 public class MoviesService {
     private final MoviesRepository moviesRepository;
+    private final CoordinatesService coordinatesService;
+    private final PeopleService peopleService;
+    private final LocationService locationService;
 
     @Autowired
-    public MoviesService(MoviesRepository moviesRepository, UsersRepository usersRepository) {
+    public MoviesService(MoviesRepository moviesRepository, UsersRepository usersRepository,
+                         CoordinatesService coordinatesService, PeopleService peopleService, LocationService locationService) {
         this.moviesRepository = moviesRepository;
+        this.coordinatesService = coordinatesService;
+        this.peopleService = peopleService;
+        this.locationService = locationService;
     }
 
     public Movie findById(Long Id){
@@ -45,8 +52,8 @@ public class MoviesService {
     }
 
     @Transactional
-    public Movie addMovie(Movie movie) {
-        return moviesRepository.save(enrichMovie(movie));
+    public Movie addMovie(Movie movie, Long authorID) {
+        return moviesRepository.save(enrichMovie(movie, authorID));
     }
 
     @Transactional
@@ -55,7 +62,9 @@ public class MoviesService {
 
         if (existingMovie.isPresent()) {
             Movie movie = existingMovie.get();
-            if (!authorID.equals(movie.getAuthorID()) || !userRole.equals(AccessRole.ADMIN)) {
+            System.out.println("Author ID: " + authorID);
+            System.out.println("Movie author ID: " + movie.getAuthorID());
+            if (!authorID.equals(movie.getAuthorID()) && !userRole.equals(AccessRole.ADMIN)) {
                 throw new IllegalArgumentException("Author ID does not match and user is not an admin");
             } //или возвращать null, или кидать исключение
             movie.setName(updatedMovie.getName());
@@ -90,8 +99,9 @@ public class MoviesService {
         moviesRepository.deleteById(id);
     }
 
-    private Movie enrichMovie(Movie movie) { //как получить Id автора
+    private Movie enrichMovie(Movie movie, Long authorId) { //как получить Id автора
         movie.setCreationDate(new java.util.Date());
+        movie.setAuthorID(authorId);
         return movie;
     }
 

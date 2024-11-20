@@ -48,6 +48,6 @@ public class JWTFilter extends OncePerRequestFilter {
             }
         }
     }
-        filterChain.doFilter(httpServletRequest, httpServletResponse); //передача запроса дальше
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 }

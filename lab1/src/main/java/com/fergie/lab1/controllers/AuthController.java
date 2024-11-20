@@ -7,9 +7,14 @@ import com.fergie.lab1.models.User;
 import com.fergie.lab1.security.JWTUtil;
 import com.fergie.lab1.security.UserDetailService;
 import com.fergie.lab1.util.UserValidator;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -32,53 +38,50 @@ public class AuthController {
     private final UserValidator userValidator;
     private final JWTUtil jwtUtil;
     private final ModelMapper modelMapper;
+    private final AuthenticationManager authenticationManager;
 
-//    private final AuthenticationManager authenticationManager;
 
 
 
     @Autowired
-    public AuthController(UserDetailService userDetailService, UserValidator userValidator, JWTUtil jwtUtil, ModelMapper modelMapper) {
+    public AuthController(UserDetailService userDetailService, UserValidator userValidator,
+                          JWTUtil jwtUtil, ModelMapper modelMapper, AuthenticationManager authenticationManager) {
         this.userDetailService = userDetailService;
         this.userValidator = userValidator;
         this.jwtUtil = jwtUtil;
         this.modelMapper = modelMapper;
-//        this.authenticationManager = authenticationManager;
+        this.authenticationManager = authenticationManager;
     }
 
     @GetMapping("/login")
     public String loginPage() {
-//        System.out.println("ОТЛАДКAAAAAAAAAAA");
         return "auth/login";
     }
 
-    @GetMapping("/userInfo")
-    public String getUserInfo() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String username = userDetails.getUsername();
-        System.out.println("Username: " + username);
-        return "auth/login";
+    @PostMapping("/login")
+    @ResponseBody
+    public
+    ResponseEntity<Map<String, String>> authenticate(@RequestBody AuthenticationDTO authenticationDTO) {
+        Logger logger = LoggerFactory.getLogger(AuthController.class);
+        try {
+            logger.info("Attempting to authenticate user: {}", authenticationDTO.getUsername());
+            UsernamePasswordAuthenticationToken authInputToken =
+                    new UsernamePasswordAuthenticationToken(authenticationDTO.getUsername(), authenticationDTO.getPassword());
+            Authentication authentication = authenticationManager.authenticate(authInputToken);
+            authenticationManager.authenticate(authInputToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String token = jwtUtil.generateToken(authenticationDTO.getUsername());
+            logger.info("Authentication successful for user: {}", authenticationDTO.getUsername());
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            response.put("redirectUrl", "/home");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Authentication failed for user: {}", authenticationDTO.getUsername(), e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", "Invalid username or password"));
+        }
     }
 
-
-//    @PostMapping("/login")
-//    public String authenticate(@RequestParam("username") String username) {
-////        User user = userDetailService.findByUsername(username);
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String username = authentication.getName();
-//        String token = jwtUtil.generateToken(username);
-//        return token; //?? что возвращать тут
-//    }
-//    @PostMapping("/login")
-//    public ResponseEntity<AuthenticationSucceedDto> authenticate(@RequestBody LoginUserDto loginUserDto) {
-//        User user = userDetailService.findByUsername(loginUserDto.getUsername());
-//        if (user == null || !user.getPassword().equals(loginUserDto.getPassword())) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthenticationSucceedDto(null));
-//        }
-//        String token = jwtUtil.generateToken(user.getUsername());
-//        return ResponseEntity.ok(new AuthenticationSucceedDto(token));
-//    }
 
     @GetMapping("/register")
     public String registerPage(@ModelAttribute("user") User user) {
@@ -106,20 +109,6 @@ public class AuthController {
         return "redirect:/auth/login";
     }
 
-//    @PostMapping("/login") //зачем использовать и AuthenticationDTO и UserDTO
-//    public Map<String, String> performLogin(@RequestBody AuthenticationDTO authenticationDTO) {
-//        UsernamePasswordAuthenticationToken authInputToken =
-//                new UsernamePasswordAuthenticationToken(authenticationDTO.getUsername(), authenticationDTO.getPassword());
-//        try {
-//            Authentication authentication = authenticationManager.authenticate(authInputToken);
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//            String token = jwtUtil.generateToken(authenticationDTO.getUsername());
-//            return Collections.singletonMap("token", token); //???
-//        } catch (Exception e) {
-//            return Collections.singletonMap("error", "Invalid username or password");
-//        }
-//    }
-
     @GetMapping("/logout")
     public String logout() {
         return "/auth/login";
@@ -133,5 +122,4 @@ public class AuthController {
         return modelMapper.map(user, UserDTO.class);
     }
 
-    //
 }
