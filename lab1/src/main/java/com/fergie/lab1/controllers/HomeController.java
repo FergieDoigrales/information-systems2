@@ -37,14 +37,14 @@ public class HomeController {
 
     @Autowired
     public HomeController(MoviesService moviesService, PeopleService peopleService,
-                         CoordinatesService coordinatesService, LocationService locationService) {
+                          CoordinatesService coordinatesService, LocationService locationService) {
         this.moviesService = moviesService;
         this.peopleService = peopleService;
         this.coordinatesService = coordinatesService;
         this.locationService = locationService;
     }
 
-//    @GetMapping("/home")
+    //    @GetMapping("/home")
 ////    @ResponseBody
 //    public String homePage() {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -56,9 +56,9 @@ public class HomeController {
 //    }
     @GetMapping("/home")
     public String getMovies(Model model,
-                                 @RequestParam(defaultValue = "0") int page,       // Номер страницы
-                                 @RequestParam(defaultValue = "9") int size,     // Размер страницы (по умолчанию 10)
-                                 @RequestParam(defaultValue = "name") String sort
+                            @RequestParam(defaultValue = "0") int page,       // Номер страницы
+                            @RequestParam(defaultValue = "9") int size,     // Размер страницы (по умолчанию 10)
+                            @RequestParam(defaultValue = "name") String sort
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String token = (String) authentication.getCredentials();
@@ -82,6 +82,7 @@ public class HomeController {
         model.addAttribute("mpaaRatings", MpaaRating.values());
         model.addAttribute("genres", MovieGenre.values());
     }
+
     @ModelAttribute("personFormAttributes")
     public void addMovieFormAttributes(Model model) {
         model.addAttribute("person", new Person());
@@ -100,22 +101,6 @@ public class HomeController {
         model.addAttribute("coordinates", new Coordinates());
     }
 
-//    model.addAttribute("locations", locationService.findAll());
-//    model.addAttribute("coordinates", coordinatesService.findAll());
-//
-//    model.addAttribute("person", new Person());
-//    model.addAttribute("location", new Location());
-//    model.addAttribute("coordinates", new Coordinates());
-
 }
-//    @GetMapping("/home")
-//    public String homePage(Model model,
-//                           @RequestParam(defaultValue = "0") int page,
-//                           @RequestParam(defaultValue = "10") int size) {
-//        Page<Movie> moviePage = moviesService.findAll(PageRequest.of(page, size));
-//        model.addAttribute("moviePage", moviePage);
-//        return "home";
-//    }
-//}
 
 
