@@ -221,12 +221,15 @@
 
             <label for="oscarsCount">Oscars Count:</label>
             <input type="number" id="oscarsCount" th:field="*{oscarsCount}" required/><br/>
+            <div style="color:red" class="error-message" id="oscarsCountError"></div>
 
             <label for="budget">Budget:</label>
             <input type="number" id="budget" th:field="*{budget}" step="0.01" required/><br/>
+            <div style="color:red" class="error-message" id="budgetError"></div>
 
             <label for="totalBoxOffice">Total Box Office:</label>
             <input type="number" id="totalBoxOffice" th:field="*{totalBoxOffice}" step="0.01" required/><br/>
+            <div style="color:red" class="error-message" id="totalBoxOfficeError"></div>
 
             <label for="mpaaRating">MPAA Rating:</label>
             <select id="mpaaRating" th:field="*{mpaaRating}">
@@ -256,9 +259,11 @@
 
             <label for="length">Length:</label>
             <input type="number" id="length" th:field="*{length}" step="1"/><br/>
+            <div style="color:red" class="error-message" id="lengthError"></div>
 
             <label for="goldenPalmCount">Golden Palm Count:</label>
             <input type="number" id="goldenPalmCount" th:field="*{goldenPalmCount}" step="1"/><br/>
+            <div style="color:red" class="error-message" id="goldenPalmCountError"></div>
 
             <label for="genre">Genre:</label>
             <select id="genre" th:field="*{genre}">
@@ -279,6 +284,7 @@
             <input type="hidden" name="parentModal" value="createMovieModal"/>
             <label for="personname">Name:</label>
             <input type="text" id="personname" th:field="*{name}" required/><br/>
+            <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
 
             <label for="location">Location:</label>
             <select id="location" th:field="*{location.id}">
@@ -291,8 +297,9 @@
 
 
             <label for="passportID">passportID:</label>
-            <input type="number" id="passportID" th:field="*{passportID}" step="0.01" required/><br/>
-
+            <input type="number" id="passportID" th:field="*{passportID}" step="1" required minlength="10" maxlength="43"/><br/>
+            <div style="color:red" th:if="${#fields.hasErrors('passportID')}" th:errors="*{passportID}">Username Error</div>
+            <div style="color:red" class="error-message" id="passportIDError"></div>
 
             <label for="eyeColor">eye color:</label>
             <select id="eyeColor" th:field="*{eyeColor}">
@@ -327,7 +334,7 @@
             <input type="number" id="y" th:field="*{y}" step="0.01" required/><br/>
 
             <label for="z">z:</label>
-            <input type="number" id="z" th:field="*{z}" step="0.01" required/><br/>
+            <input type="number" id="z" th:field="*{z}" step="1" required/><br/>
 
             <button type="submit" id="savePersonBtn">Save</button>
         </form>
@@ -341,10 +348,10 @@
         <form th:action="@{/coordinates/save}" method="post" th:object="${coordinates}">
 
             <label for="x">x:</label>
-            <input type="number" id="coord_x" th:field="*{x}" step="0.01" required/><br/>
+            <input type="number" id="coord_x" th:field="*{x}" step="1" required/><br/>
 
             <label for="y">y:</label>
-            <input type="number" id="coord_y" th:field="*{y}" step="0.01" required/><br/>
+            <input type="number" id="coord_y" th:field="*{y}" step="1" required/><br/>
 
             <button type="submit">Save</button>
         </form>
@@ -386,6 +393,9 @@
                 event.preventDefault();
                 const formData = new FormData(movieForm);
 
+                const errorElements = personForm.querySelectorAll(".error-message");
+                errorElements.forEach(el => el.textContent = "");
+
                 fetch(movieForm.getAttribute("action"), {
                     method: "POST",
                     body: formData,
@@ -406,7 +416,6 @@
                     })
                     .catch(error => {
                         console.error("Error saving movie:", error);
-                        alert("An error occurred while saving the movie.");
                     });
             });
         }
@@ -462,7 +471,7 @@
                     fetch(`/movie/${movieId}`, { method: "DELETE" })
                         .then(response => {
                             if (response.ok) {
-                                alert("Movie deleted successfully");
+                                // alert("Movie deleted successfully");
                                 location.reload();
                             } else {
                                 alert("Failed to delete movie");
@@ -478,31 +487,55 @@
         if (personForm) {
             personForm.addEventListener("submit", function (event) {
                 event.preventDefault();
+
+                const errorElements = personForm.querySelectorAll(".error-message");
+                errorElements.forEach(el => el.textContent = "");
+
                 const formData = new FormData(personForm);
+                const passportIDInput = document.getElementById("passportID");
+                const passportIDError = document.getElementById("passportIDError");
+
+                passportIDError.textContent = "";
+
+                let hasErrors = false;
+
+                if (passportIDInput.value.length < 10 || passportIDInput.value.length > 43) {
+                    passportIDError.textContent = "Passport ID must be between 10 and 43 characters.";
+                    hasErrors = true;
+                }
+
+                if (hasErrors) {
+                    return;
+                }
 
                 fetch(personForm.getAttribute("action"), {
                     method: "POST",
                     body: formData,
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
+                    .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // alert("Person saved successfully!");
                             document.getElementById("createPersonModal").style.display = "none";
                             openModal("createMovieModal");
                             updatePersonsList(data.updatedPersonsList);
+                        } else if (data.errors) {
+
+                            for (const [field, message] of Object.entries(data.errors)) {
+                                const fieldElement = personForm.querySelector(`[th\\:field="*{${field}}"]`);
+                                if (fieldElement) {
+                                    const errorElement = document.createElement("div");
+                                    errorElement.className = "error-message";
+                                    errorElement.style.color = "red";
+                                    errorElement.textContent = message;
+                                    fieldElement.insertAdjacentElement("afterend", errorElement);
+                                }
+                            }
                         } else {
                             alert(data.message || "Failed to save person.");
                         }
                     })
                     .catch(error => {
                         console.error("Error saving person:", error);
-                        alert("An error occurred while saving the person.");
                     });
             });
 
@@ -539,7 +572,7 @@
                     })
                     .then(data => {
                         if (data.success) {
-                            alert("Coordinates saved successfully!");
+                            // alert("Coordinates saved successfully!");
                             document.getElementById("createCoordinatesModal").style.display = "none";
                             updateCoordinatesList(data.updatedCoordinatesList);
                         } else {
@@ -548,7 +581,7 @@
                     })
                     .catch(error => {
                         console.error("Error saving coordinates:", error);
-                        alert("An error occurred while saving the coordinates.");
+                        // alert("An error occurred while saving the coordinates.");
                     });
             });
 
@@ -581,7 +614,7 @@
                     })
                     .then(data => {
                         if (data.success) {
-                            alert("Location saved successfully!");
+                            // alert("Location saved successfully!");
                             document.getElementById("createLocationModal").style.display = "none";
                             updateLocationsList(data.updatedLocationsList);
                         } else {
@@ -590,7 +623,7 @@
                     })
                     .catch(error => {
                         console.error("Error saving location:", error);
-                        alert("An error occurred while saving the location.");
+                        // alert("An error occurred while saving the location.");
                     });
             });
 
