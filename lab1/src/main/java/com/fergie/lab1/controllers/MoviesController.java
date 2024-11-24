@@ -82,19 +82,14 @@ public class MoviesController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<?> updateMovie(@ModelAttribute("movie") Movie movie) {
+    public ResponseEntity<?> updateMovie(@ModelAttribute("movie") MovieDTO movieDTO) {
         System.out.println("Entering updateMovie method");
         CustomUserDetails userDetails = getUserInfo();
-        System.out.println(userDetails.getId());
-        System.out.println(movie.getMovieId());
+        Movie movie = convertToMovie(movieDTO);
+
         try {
             setRelatedEntities(movie);
-
-
-
             Movie updatedMovie = moviesService.updateMovie(userDetails.getRole(), userDetails.getId(), movie.getMovieId(), movie);
-            System.out.println(userDetails.getId());
-            System.out.println(movie.getMovieId());
 
             if (updatedMovie != null) {
                 return ResponseEntity.ok(Map.of(

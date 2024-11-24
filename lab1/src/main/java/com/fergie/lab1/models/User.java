@@ -32,29 +32,4 @@ public class User {
     @Enumerated(EnumType.STRING)
     private AccessRole role = AccessRole.USER; //куда тебя переставить????
 
-//    public AccessRole getRole(){
-//        return role;
-//    }
-//
-//    public String getPassword(){
-//        return password;
-//    }
-//
-//    public String getUsername() {
-//        return username;
-//    }
-
-//    public void setUsername(String username) {
-//        this.username = username;
-//    }
-//
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
-//
-//    public void setRole(AccessRole role) {
-//        this.role = role;
-//    }
-
 }
-//добавить ограничения и т.п.
