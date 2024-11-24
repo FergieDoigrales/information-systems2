@@ -18,6 +18,9 @@ spring:
         ddl-generation.output-mode: database
         weaver.disable: true
         cache.shared.default: false
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
 logging:
   level:
     org:
