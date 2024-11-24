@@ -159,7 +159,7 @@
     </thead>
     <tbody>
     <tr th:each="movie : ${moviePage.content}">
-        <td th:text="${userRole}">Name</td>
+        <td th:text="${movie.name}">Name</td>
         <td th:text="${movie.authorID}">Author</td>
         <td th:text="${movie.creationDate}">Creation Date</td>
         <td th:text="${movie.coordinates.x + '; ' + movie.coordinates.y}">Coordinates</td>
@@ -433,10 +433,66 @@
         if (movieForm) {
             movieForm.addEventListener("submit", function (event) {
                 event.preventDefault();
+
+
                 const formData = new FormData(movieForm);
+                let hasErrors = false;
 
                 const errorElements = movieForm.querySelectorAll(".error-message");
                 errorElements.forEach(el => el.textContent = "");
+
+                const oscarsCountInput = document.getElementById("oscarsCount");
+                const oscarsCountError = document.getElementById("oscarsCountError");
+
+                const budgetInput = document.getElementById("budget");
+                const budgetError = document.getElementById("budgetError");
+
+                const totalBoxOfficeInput = document.getElementById("totalBoxOffice");
+                const totalBoxOfficeError = document.getElementById("totalBoxOfficeError");
+
+                const lengthInput = document.getElementById("length");
+                const lengthError = document.getElementById("lengthError");
+
+                const goldenPalmCountInput = document.getElementById("goldenPalmCount");
+                const goldenPalmCountError = document.getElementById("goldenPalmCountError");
+
+                oscarsCountError.textContent = "";
+                budgetError.textContent = "";
+                totalBoxOfficeError.textContent = "";
+                lengthError.textContent = "";
+                goldenPalmCountError.textContent = "";
+
+
+                if (oscarsCountInput.value < 1) {
+                    oscarsCountError.textContent = "Oscars Count must be greater than zero.";
+                    hasErrors = true;
+                }
+                if (budgetInput.value < 1) {
+                    budgetError.textContent = "Budget must be greater than zero.";
+                    hasErrors = true;
+                }
+                if (budgetInput.value < 1) {
+                    budgetError.textContent = "Budget must be greater than zero.";
+                    hasErrors = true;
+                }
+                if (totalBoxOfficeInput.value < 1) {
+                    totalBoxOfficeError.textContent = "Total Box Office must be greater than zero.";
+                    hasErrors = true;
+                }
+                if (lengthInput.value < 1) {
+                    lengthError.textContent = "Length must be greater than zero.";
+                    hasErrors = true;
+                }
+                if (goldenPalmCountInput.value < 1) {
+                    goldenPalmCountError.textContent = "Golden Palm Count must be greater than zero.";
+                    hasErrors = true;
+                }
+
+
+
+                if (hasErrors) {
+                    return;
+                }
 
                 fetch(movieForm.getAttribute("action"), {
                     method: "POST",
@@ -588,6 +644,90 @@
                             .join("");
                     }
                 });
+            }
+        }
+
+        // Coordinates
+        const coordinatesForm = document.querySelector("#createCoordinatesModal form");
+        if (coordinatesForm) {
+            coordinatesForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                const formData = new FormData(coordinatesForm);
+
+                fetch(coordinatesForm.getAttribute("action"), {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // alert("Coordinates saved successfully!");
+                            document.getElementById("createCoordinatesModal").style.display = "none";
+                            updateCoordinatesList(data.updatedCoordinatesList);
+                        } else {
+                            alert(data.message || "Failed to save coordinates.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error saving coordinates:", error);
+                        // alert("An error occurred while saving the coordinates.");
+                    });
+            });
+
+            function updateCoordinatesList(coordinates) {
+                const coordinatesSelect = document.querySelector("#coordinates");
+                if (coordinatesSelect) {
+                    coordinatesSelect.innerHTML = coordinates
+                        .map(coordinate => `<option value="${coordinate.id}">${coordinate.x}, ${coordinate.y}</option>`)
+                        .join("");
+                }
+            }
+        }
+
+        // Location
+        const locationForm = document.querySelector("#createLocationModal form");
+        if (locationForm) {
+            locationForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                const formData = new FormData(locationForm);
+
+                fetch(locationForm.getAttribute("action"), {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // alert("Location saved successfully!");
+                            document.getElementById("createLocationModal").style.display = "none";
+                            updateLocationsList(data.updatedLocationsList);
+                        } else {
+                            alert(data.message || "Failed to save location.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error saving location:", error);
+                        // alert("An error occurred while saving the location.");
+                    });
+            });
+
+            function updateLocationsList(locations) {
+                const locationsSelect = document.querySelector("#location");
+                if (locationsSelect) {
+                    locationsSelect.innerHTML = locations
+                        .map(location => `<option value="${location.id}">${location.x}, ${location.y}, ${location.z}</option>`)
+                        .join("");
+                }
             }
         }
     });
