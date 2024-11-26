@@ -45,7 +45,7 @@ public class HomeController {
     @GetMapping("/home")
     public String getMovies(Model model,
                             @RequestParam(defaultValue = "0") int page,
-                            @RequestParam(defaultValue = "9") int size,
+                            @RequestParam(defaultValue = "10") int size,
                             @RequestParam(defaultValue = "name") String sort
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

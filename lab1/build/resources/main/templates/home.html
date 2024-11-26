@@ -144,6 +144,43 @@
         #addButton:focus {
             outline: none;
         }
+        .btn {
+            display: block;
+            width: 70px;   /* одинаковая ширина для всех кнопок */
+            height: 20px;   /* одинаковая высота для всех кнопок */
+            text-align: center;
+            line-height: 20px; /* Выравнивание текста по центру */
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-bottom: 6px;
+        }
+
+        /* Цвет для кнопки Edit */
+        .edit-movie-button {
+            background-color: #4CAF50; /* Зеленый цвет */
+            color: white;
+        }
+
+        .edit-movie-button:hover {
+            background-color: #45a049; /* Цвет при наведении */
+        }
+
+        /* Цвет для кнопки Delete */
+        .delete-movie-button {
+            background-color: #f44336; /* Красный цвет */
+            color: white;
+        }
+
+        .delete-movie-button:hover {
+            background-color: #da190b; /* Цвет при наведении */
+        }
+        .table-container {
+            overflow-y: auto;  /* Включаем вертикальную прокрутку */
+            padding-right: 10px; /* Можно добавить отступ справа, чтобы убрать полосы прокрутки */
+        }
+
     </style>
 
 </head>
@@ -168,89 +205,90 @@
     </div>
 </div>
 <button class="open-modal" id="addButton" data-modal="createMovieModal">Create Movie</button>
+<div class="table-container">
+    <table class="styled-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Author</th>
+            <th>Creation Date</th>
+            <th>Coordinates</th>
+            <th>Oscars Count</th>
+            <th>Budget</th>
+            <th>Total Box Office</th>
+            <th>MPAA Rating</th>
+            <th>Length</th>
+            <th>Golden Palm Count</th>
+            <th>Genre</th>
+            <th>Director</th>
+            <th>Director eye color</th>
+            <th>Director hair color</th>
+            <th>Director location</th>
+            <th>Director passportID</th>
+            <th>Director nationality</th>
+            <th>Operator</th>
+            <th>Operator eye color</th>
+            <th>Operator hair color</th>
+            <th>Operator location</th>
+            <th>Operator passportID</th>
+            <th>Operator nationality</th>
+            <th>Screenwriter</th>
+            <th>Screenwriter eye color</th>
+            <th>Screenwriter hair color</th>
+            <th>Screenwriter location</th>
+            <th>Screenwriter passportID</th>
+            <th>Screenwriter nationality</th>
 
-<table class="styled-table">
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Author</th>
-        <th>Creation Date</th>
-        <th>Coordinates</th>
-        <th>Oscars Count</th>
-        <th>Budget</th>
-        <th>Total Box Office</th>
-        <th>MPAA Rating</th>
-        <th>Length</th>
-        <th>Golden Palm Count</th>
-        <th>Genre</th>
-        <th>Director</th>
-        <th>Director eye color</th>
-        <th>Director hair color</th>
-        <th>Director location</th>
-        <th>Director passportID</th>
-        <th>Director nationality</th>
-        <th>Operator</th>
-        <th>Operator eye color</th>
-        <th>Operator hair color</th>
-        <th>Operator location</th>
-        <th>Operator passportID</th>
-        <th>Operator nationality</th>
-        <th>Screenwriter</th>
-        <th>Screenwriter eye color</th>
-        <th>Screenwriter hair color</th>
-        <th>Screenwriter location</th>
-        <th>Screenwriter passportID</th>
-        <th>Screenwriter nationality</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="movie : ${moviePage.content}">
+            <td th:text="${movie.name}">Name</td>
+            <td th:text="${movie.authorID}">Author</td>
+            <td th:text="${movie.creationDate}">Creation Date</td>
+            <td th:text="${movie.coordinates.x + '; ' + movie.coordinates.y}">Coordinates</td>
+            <td th:text="${movie.oscarsCount}">Oscars Count</td>
+            <td th:text="${movie.budget}">Budget</td>
+            <td th:text="${movie.totalBoxOffice}">Total Box Office</td>
+            <td th:text="${movie.mpaaRating}">MPAA Rating</td>
+            <td th:text="${movie.length}">Length</td>
+            <td th:text="${movie.goldenPalmCount}">Golden Palm Count</td>
+            <td th:text="${movie.genre}">Genre</td>
+            <td th:text="${movie.director.name}">Director</td>
+            <td th:text="${movie.director.eyeColor}">Director eye color</td>
+            <td th:text="${movie.director.hairColor}">Director hair color</td>
+            <td th:text="${movie.director.location.x + '; ' + movie.director.location.y  + '; ' + movie.director.location.z }">Director location</td>
+            <td th:text="${movie.director.passportID}">Director passportID</td>
+            <td th:text="${movie.director.nationality}">Director nationality</td>
+            <td th:text="${movie.operator.name}">Operator</td>
+            <td th:text="${movie.operator.eyeColor}">Operator eye color</td>
+            <td th:text="${movie.operator.hairColor}">Operator hair color</td>
+            <td th:text="${movie.operator.location.x + '; ' + movie.operator.location.y  + '; ' + movie.operator.location.z }">Operator location</td>
+            <td th:text="${movie.operator.passportID}">Operator passportID</td>
+            <td th:text="${movie.operator.nationality}">Operator nationality</td>
+            <td th:text="${movie.screenwriter.name}">Screenwriter</td>
+            <td th:text="${movie.screenwriter.eyeColor}">Screenwriter eye color</td>
+            <td th:text="${movie.screenwriter.hairColor}">Screenwriter hair color</td>
+            <td th:text="${movie.screenwriter.location.x + '; ' + movie.screenwriter.location.y  + '; ' + movie.screenwriter.location.z }">Screenwriter location</td>
+            <td th:text="${movie.screenwriter.passportID}">Screenwriter passportID</td>
+            <td th:text="${movie.screenwriter.nationality}">Screenwriter nationality</td>
+            <td>
+                <button th:if="${movie.authorID == currentUserId || userRole == 'ADMIN'}"
+                        th:attr="data-id=${movie.movieId}"
+                        class="edit-movie-button btn">Edit</button>
+                <button th:if="${movie.authorID == currentUserId || userRole == 'ADMIN'}"
+                        th:attr="data-id=${movie.movieId}"
+                        class="delete-movie-button btn">Delete</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="movie : ${moviePage.content}">
-        <td th:text="${movie.name}">Name</td>
-        <td th:text="${movie.authorID}">Author</td>
-        <td th:text="${movie.creationDate}">Creation Date</td>
-        <td th:text="${movie.coordinates.x + '; ' + movie.coordinates.y}">Coordinates</td>
-        <td th:text="${movie.oscarsCount}">Oscars Count</td>
-        <td th:text="${movie.budget}">Budget</td>
-        <td th:text="${movie.totalBoxOffice}">Total Box Office</td>
-        <td th:text="${movie.mpaaRating}">MPAA Rating</td>
-        <td th:text="${movie.length}">Length</td>
-        <td th:text="${movie.goldenPalmCount}">Golden Palm Count</td>
-        <td th:text="${movie.genre}">Genre</td>
-        <td th:text="${movie.director.name}">Director</td>
-        <td th:text="${movie.director.eyeColor}">Director eye color</td>
-        <td th:text="${movie.director.hairColor}">Director hair color</td>
-        <td th:text="${movie.director.location.x + '; ' + movie.director.location.y  + '; ' + movie.director.location.z }">Director location</td>
-        <td th:text="${movie.director.passportID}">Director passportID</td>
-        <td th:text="${movie.director.nationality}">Director nationality</td>
-        <td th:text="${movie.operator.name}">Operator</td>
-        <td th:text="${movie.operator.eyeColor}">Operator eye color</td>
-        <td th:text="${movie.operator.hairColor}">Operator hair color</td>
-        <td th:text="${movie.operator.location.x + '; ' + movie.operator.location.y  + '; ' + movie.operator.location.z }">Operator location</td>
-        <td th:text="${movie.operator.passportID}">Operator passportID</td>
-        <td th:text="${movie.operator.nationality}">Operator nationality</td>
-        <td th:text="${movie.screenwriter.name}">Screenwriter</td>
-        <td th:text="${movie.screenwriter.eyeColor}">Screenwriter eye color</td>
-        <td th:text="${movie.screenwriter.hairColor}">Screenwriter hair color</td>
-        <td th:text="${movie.screenwriter.location.x + '; ' + movie.screenwriter.location.y  + '; ' + movie.screenwriter.location.z }">Screenwriter location</td>
-        <td th:text="${movie.screenwriter.passportID}">Screenwriter passportID</td>
-        <td th:text="${movie.screenwriter.nationality}">Screenwriter nationality</td>
-        <td>
-            <button th:if="${movie.authorID == currentUserId || userRole == 'ADMIN'}"
-                    th:attr="data-id=${movie.movieId}"
-                    class="edit-movie-button">Edit</button>
-            <button th:if="${movie.authorID == currentUserId || userRole == 'ADMIN'}"
-                    th:attr="data-id=${movie.movieId}"
-                    class="delete-movie-button">Delete</button>
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-<div>
-    <a th:if="${moviePage.hasPrevious()}" th:href="@{/home(page=${moviePage.number - 1}, size=${moviePage.size})}">Previous</a>
-    <span>Page <span th:text="${moviePage.number + 1}">1</span> of <span th:text="${moviePage.totalPages}">1</span></span>
-    <a th:if="${moviePage.hasNext()}" th:href="@{/home(page=${moviePage.number + 1}, size=${moviePage.size})}">Next</a>
+    <div class="pagination">
+        <a th:if="${moviePage.hasPrevious()}" th:href="@{/home(page=${moviePage.number - 1}, size=${moviePage.size})}">Previous</a>
+        <span>Page <span th:text="${moviePage.number + 1}">1</span> of <span th:text="${moviePage.totalPages}">1</span></span>
+        <a th:if="${moviePage.hasNext()}" th:href="@{/home(page=${moviePage.number + 1}, size=${moviePage.size})}">Next</a>
+    </div>
 </div>
 
 <div id="roleRequestModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;">
