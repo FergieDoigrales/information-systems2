@@ -1,6 +1,7 @@
 package com.fergie.lab1.services;
 
 import com.fergie.lab1.models.Movie;
+import com.fergie.lab1.models.User;
 import com.fergie.lab1.models.enums.*;
 import com.fergie.lab1.repositories.MoviesRepository;
 import com.fergie.lab1.repositories.UsersRepository;
@@ -24,14 +25,16 @@ public class MoviesService {
     private final CoordinatesService coordinatesService;
     private final PeopleService peopleService;
     private final LocationService locationService;
+    private final MovieAuditService movieAuditService;
 
     @Autowired
-    public MoviesService(MoviesRepository moviesRepository, UsersRepository usersRepository,
+    public MoviesService(MoviesRepository moviesRepository, UsersRepository usersRepository, MovieAuditService movieAuditService,
                          CoordinatesService coordinatesService, PeopleService peopleService, LocationService locationService) {
         this.moviesRepository = moviesRepository;
         this.coordinatesService = coordinatesService;
         this.peopleService = peopleService;
         this.locationService = locationService;
+        this.movieAuditService = movieAuditService;
     }
 
     public Movie findById(Long Id){
@@ -52,8 +55,10 @@ public class MoviesService {
     }
 
     @Transactional
-    public Movie addMovie(Movie movie, Long authorID) {
-        return moviesRepository.save(enrichMovie(movie, authorID));
+    public void addMovie(Movie movie, Long authorID) {
+        Movie addedMovie = moviesRepository.save(enrichMovie(movie, authorID));
+        movieAuditService.recordMovieChange(addedMovie, "CREATE", "name", movie.getName(), movie.getName(), String.valueOf(authorID));
+
     }
 
     @Transactional
@@ -67,6 +72,7 @@ public class MoviesService {
             if (!authorID.equals(movie.getAuthorID()) && !userRole.equals(AccessRole.ADMIN)) {
                 throw new IllegalArgumentException("Author ID does not match and user is not an admin");
             } //или возвращать null, или кидать исключение
+            movieAuditService.recordMovieChange(movie, "UPDATE", "name", movie.getName(), updatedMovie.getName(), String.valueOf(authorID));
             movie.setName(updatedMovie.getName());
             movie.setName(updatedMovie.getName());
             movie.setCoordinates(updatedMovie.getCoordinates());
@@ -95,6 +101,7 @@ public class MoviesService {
             if (!authorID.equals(movie.getAuthorID()) && !userRole.equals(AccessRole.ADMIN)) {
                 throw new IllegalArgumentException("Author ID does not match and user is not an admin");
             }
+            movieAuditService.recordMovieChange(movie, "DELETE", "name", movie.getName(), "DELETED", String.valueOf(authorID));
         }
         moviesRepository.deleteById(id);
     }

@@ -100,7 +100,7 @@ public class AuthController {
         }
 
         if (bindingResult.hasErrors()){
-            return "/auth/register"; //тут пробрасывать исключение и ловить его с помощью @ExceptionHandler и выбрасывать Json с ошибкой в каком поле
+            return "/auth/register";
         }
 
         userDetailService.register(user);

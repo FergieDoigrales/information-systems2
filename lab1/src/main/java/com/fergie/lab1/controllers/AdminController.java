@@ -1,8 +1,10 @@
 package com.fergie.lab1.controllers;
 
+import com.fergie.lab1.models.MovieAudit;
 import com.fergie.lab1.models.RoleRequest;
 import com.fergie.lab1.models.enums.RequestStatus;
 import com.fergie.lab1.security.CustomUserDetails;
+import com.fergie.lab1.services.MovieAuditService;
 import com.fergie.lab1.services.RequestsService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,15 +23,17 @@ import java.util.Map;
 @Controller
 public class AdminController {
     private final RequestsService requestsService;
+    private final MovieAuditService movieAuditService;
 
-    public AdminController(RequestsService requestsService) {
+    public AdminController(RequestsService requestsService, MovieAuditService movieAuditService) {
         this.requestsService = requestsService;
+        this.movieAuditService = movieAuditService;
     }
 
     @GetMapping("")
     public String getAdminStuff(Model model,
-                            @RequestParam(defaultValue = "0") int page,       // Номер страницы
-                            @RequestParam(defaultValue = "9") int size,     // Размер страницы (по умолчанию 10)
+                            @RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "9") int size,
                             @RequestParam(defaultValue = "username") String sort
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -37,8 +41,11 @@ public class AdminController {
         model.addAttribute("username", authentication.getName());
         model.addAttribute("roles", authentication.getAuthorities());
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
+        Pageable pageableAudit = PageRequest.of(page, size);
         Page<RoleRequest> requestsPage = requestsService.findAll(pageable);
+        Page<MovieAudit> auditPage = movieAuditService.findAll(pageableAudit);
         model.addAttribute("requestsPage", requestsPage);
+        model.addAttribute("auditPage", auditPage);
         model.addAttribute("currentUserId", userDetails.getId());
         model.addAttribute("userRole", userDetails.getRole().name());
         return "admin";

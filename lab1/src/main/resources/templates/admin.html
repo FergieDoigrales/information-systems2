@@ -104,11 +104,51 @@
             background-color: #f1f1f1;
             cursor: pointer;
         }
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            text-decoration: none;
+            margin: 0 10px;
+            color: #000;
+        }
+
+        .pagination span {
+            margin: 0 10px;
+            font-size: 16px;
+        }
+        #reqButton {
+            background-color: #ff69b4;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 30px;
+        }
+
+        #reqButton:hover {
+            background-color: #ff1493;
+        }
+
+        #reqButton:focus {
+            outline: none;
+        }
     </style>
 </head>
 <body>
 <div class="header">
-    <h1> <a th:href="@{/home}">MovieStorage</a></h1>
+    <h1> <a th:href="@{/home}" style="cursor: pointer; color: hotpink; text-decoration: none;">MovieStorage</a></h1>
     <div class="user-info">
         <span th:text="${userRole}"
               class="open-modal"
@@ -120,55 +160,35 @@
            th:href="@{/admin}">Admin Panel</a>
     </div>
 </div>
-<h1>Admin Panel</h1>
+<button class="open-modal" id="reqButton" data-modal="adminRequestsModal">Admin Requests</button>
 
-<button class="open-modal" data-modal="adminRequestsModal">Admin Requests</button>
+<h1>Movie Audit</h1>
+<table class="styled-table">
+    <thead>
+    <tr>
+        <th>Movie id</th>
+        <th>Movie</th>
+        <th>Action</th>
+        <th>Changed By</th>
+        <th>Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="audit : ${auditPage.content}">
+        <td th:text="${audit.movieId}">Movie id</td>
+        <td th:text="${audit.newValue}">Movie id</td>
+        <td th:text="${audit.action}">Action</td>
+        <td th:text="${audit.changedBy}">Changed By</td>
+        <td th:text="${audit.changedAt}">Date</td>
+    </tr>
+    </tbody>
+</table>
 
-<!--<h2>Movies</h2>-->
-<!--<table class="styled-table">-->
-<!--    <thead>-->
-<!--    <tr>-->
-<!--        <th>Name</th>-->
-<!--        <th>Author</th>-->
-<!--        <th>Creation Date</th>-->
-<!--        <th>Coordinates</th>-->
-<!--        <th>Oscars Count</th>-->
-<!--        <th>Budget</th>-->
-<!--        <th>Total Box Office</th>-->
-<!--        <th>MPAA Rating</th>-->
-<!--        <th>Length</th>-->
-<!--        <th>Golden Palm Count</th>-->
-<!--        <th>Genre</th>-->
-<!--        <th>Last Modified By</th>-->
-<!--        <th>Last Modified At</th>-->
-<!--        <th>Action</th>-->
-<!--    </tr>-->
-<!--    </thead>-->
-<!--    <tbody>-->
-<!--    <tr th:each="movie : ${moviePage.content}">-->
-<!--        <td th:text="${movie.name}">Name</td>-->
-<!--        <td th:text="${movie.authorID}">Author</td>-->
-<!--        <td th:text="${movie.creationDate}">Creation Date</td>-->
-<!--        <td th:text="${movie.coordinates.x + '; ' + movie.coordinates.y}">Coordinates</td>-->
-<!--        <td th:text="${movie.oscarsCount}">Oscars Count</td>-->
-<!--        <td th:text="${movie.budget}">Budget</td>-->
-<!--        <td th:text="${movie.totalBoxOffice}">Total Box Office</td>-->
-<!--        <td th:text="${movie.mpaaRating}">MPAA Rating</td>-->
-<!--        <td th:text="${movie.length}">Length</td>-->
-<!--        <td th:text="${movie.goldenPalmCount}">Golden Palm Count</td>-->
-<!--        <td th:text="${movie.genre}">Genre</td>-->
-<!--        <td th:text="${movie.lastModifiedBy}">Last Modified By</td>-->
-<!--        <td th:text="${movie.lastModifiedAt}">Last Modified At</td>-->
-<!--        <td th:text="${movie.action}">Action</td>-->
-<!--    </tr>-->
-<!--    </tbody>-->
-<!--</table>-->
-
-<!--<div class="pagination">-->
-<!--    <a th:if="${moviePage.hasPrevious()}" th:href="@{/admin/movies(page=${moviePage.number - 1}, size=${moviePage.size})}">Previous</a>-->
-<!--    <span>Page <span th:text="${moviePage.number + 1}">1</span> of <span th:text="${moviePage.totalPages}">1</span></span>-->
-<!--    <a th:if="${moviePage.hasNext()}" th:href="@{/admin/movies(page=${moviePage.number + 1}, size=${moviePage.size})}">Next</a>-->
-<!--</div>-->
+<div class="pagination">
+    <a th:if="${auditPage.hasPrevious()}" th:href="@{/admin/movies(page=${auditPage.number - 1}, size=${auditPage.size})}">Previous</a>
+    <span>Page <span th:text="${auditPage.number + 1}">1</span> of <span th:text="${auditPage.totalPages}">1</span></span>
+    <a th:if="${auditPage.hasNext()}" th:href="@{/admin/movies(page=${auditPage.number + 1}, size=${auditPage.size})}">Next</a>
+</div>
 
 <div id="adminRequestsModal" class="modal">
     <div class="modal-content">

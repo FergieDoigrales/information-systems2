@@ -9,6 +9,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.util.Date;
 
@@ -33,6 +37,7 @@ public class Movie {
     private Coordinates coordinates; //Поле не может быть null
 
     @Column(name = "creation_date")
+    @CreatedDate
     @NotNull(message="field cannot be null")
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
@@ -81,7 +86,15 @@ public class Movie {
     private MovieGenre genre; //Поле может быть null
 
     @Column(name = "author_id")
+    @CreatedBy
     private Long authorID;
+
+    @LastModifiedBy
+    private String modifiedBy;
+
+    @LastModifiedDate
+    @Temporal(TemporalType.TIMESTAMP)
+    private java.util.Date modifiedAt;
 
     public Movie() {
         this.creationDate = new Date();

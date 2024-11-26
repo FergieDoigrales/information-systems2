@@ -103,17 +103,63 @@
             background-color: #f1f1f1;
             cursor: pointer;
         }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            text-decoration: none;
+            margin: 0 10px;
+            color: #000;
+        }
+
+        .pagination span {
+            margin: 0 10px;
+            font-size: 16px;
+        }
+        #addButton {
+            background-color: #ff69b4;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 30px;
+        }
+
+        #addButton:hover {
+            background-color: #ff1493;
+        }
+
+        #addButton:focus {
+            outline: none;
+        }
     </style>
 
 </head>
 <body th:attr="data-open-modal=${openModal}">
 <div class="header">
-    <h1> <a th:href="@{/home}">MovieStorage</a></h1>
+    <h1> <a th:href="@{/home}" style="cursor: pointer; color: hotpink; text-decoration: none;">MovieStorage</a></h1>
     <div class="user-info">
         <span th:text="${userRole}"
               class="open-modal"
               data-modal="roleRequestModal"
-              style="cursor: pointer; text-decoration: underline; color: hotpink;">Role</span>
+              style="cursor: pointer; text-decoration: underline; color: hotpink;"
+              th:if="${userRole != 'ADMIN'}">Role</span>
+        <span th:text="${userRole}"
+              class="open-modal"
+              style="cursor: not-allowed; text-decoration: underline; color: hotpink;"
+              th:if="${userRole == 'ADMIN'}">Role</span>
         <span th:text="${username}">Username</span>
         <a th:href="@{/auth/logout}">Logout</a>
         <a th:if="${userRole == 'ADMIN'}"
@@ -121,7 +167,8 @@
         <!--        <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/admin/panel}">Admin Panel</a>-->
     </div>
 </div>
-<button class="open-modal" data-modal="createMovieModal">Create Movie</button>
+<button class="open-modal" id="addButton" data-modal="createMovieModal">Create Movie</button>
+
 <table class="styled-table">
     <thead>
     <tr>
