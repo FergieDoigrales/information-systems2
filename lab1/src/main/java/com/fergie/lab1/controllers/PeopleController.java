@@ -58,15 +58,8 @@ public class PeopleController {
     public void addCoordinatesFormAttributes(Model model) {
         model.addAttribute("coordinates", new Coordinates());
     }
-//    @PostMapping("/save")
-//    @ResponseBody
-//    public ResponseEntity<?> savePerson(@ModelAttribute("person") PersonDTO personDTO, Long authorId, @RequestParam("parentModal") String parentModal,
-//                                        Model model) {
-//        personDTO.setLocation(locationService.findById(personDTO.getLocation().getId()));
-//        peopleService.addPerson(convertToPerson(personDTO), authorId);
-//        model.addAttribute("openModal", parentModal);
-//        return ResponseEntity.ok().build();
-//    }
+
+
 @PostMapping("/save")
 public ResponseEntity<?> savePerson(@ModelAttribute("person") PersonDTO personDTO, BindingResult bindingResult) {
     try {

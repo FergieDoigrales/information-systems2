@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -30,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("/movie")
 public class MoviesController {
     private final MoviesService moviesService;
@@ -40,16 +41,19 @@ public class MoviesController {
 
     private final ModelMapper modelMapper;
 
+    private final SimpMessagingTemplate messagingTemplate;
+
 
 
 
     @Autowired
     public MoviesController(MoviesService moviesService, ModelMapper modelMapper, PeopleService peopleService,
-                            CoordinatesService coordinatesService) {
+                            CoordinatesService coordinatesService, SimpMessagingTemplate messagingTemplate) {
         this.moviesService = moviesService;
         this.modelMapper = modelMapper;
         this.peopleService = peopleService;
         this.coordinatesService = coordinatesService;
+        this.messagingTemplate = messagingTemplate;
     }
 
 
@@ -60,6 +64,7 @@ public class MoviesController {
             setRelatedEntities(movie);
             CustomUserDetails userDetails = getUserInfo();
             moviesService.addMovie(movie, userDetails.getId());
+            messagingTemplate.convertAndSend("/topic/movies", movie);
 
             return ResponseEntity.ok(Map.of(
                     "success", true
@@ -74,6 +79,7 @@ public class MoviesController {
     @GetMapping("/{id}")
     public ResponseEntity<Movie> getMovieById(@PathVariable Long id) {
         Movie movie = moviesService.findById(id);
+        messagingTemplate.convertAndSend("/topic/movies", id);
         if (movie != null) {
             return ResponseEntity.ok(movie);
         } else {
@@ -90,7 +96,7 @@ public class MoviesController {
         try {
             setRelatedEntities(movie);
             Movie updatedMovie = moviesService.updateMovie(userDetails.getRole(), userDetails.getId(), movie.getMovieId(), movie);
-
+            messagingTemplate.convertAndSend("/topic/movies", movie);
             if (updatedMovie != null) {
                 return ResponseEntity.ok(Map.of(
                         "success", true,

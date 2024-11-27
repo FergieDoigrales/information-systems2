@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+</head>
+<body>
+<div class="header">
+    <h1> <a th:href="@{/home}" style="cursor: pointer; color: hotpink; text-decoration: none;">MovieStorage</a></h1>
+    <div class="user-info">
+        <span th:text="${userRole}"
+              class="open-modal"
+              data-modal="roleRequestModal"
+              style="cursor: pointer; text-decoration: underline; color: hotpink;"
+              th:if="${userRole != 'ADMIN'}">Role</span>
+        <span th:text="${userRole}"
+              class="open-modal"
+              style="cursor: not-allowed; text-decoration: underline; color: hotpink;"
+              th:if="${userRole == 'ADMIN'}">Role</span>
+        <span th:text="${username}">Username</span>
+        <a th:href="@{/auth/logout}">Logout</a>
+        <a th:if="${userRole == 'ADMIN'}"
+           th:href="@{/admin}">Admin Panel</a>
+    </div>
+</div>
+</body>
+</html>
