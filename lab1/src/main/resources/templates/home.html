@@ -282,7 +282,98 @@
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 
 <script type="text/javascript">
+    let stompClient = null;
 
+    function connect() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+
+            stompClient.subscribe('/topic/movies', function (response) {
+                const data = JSON.parse(response.body);
+                const moviePage = data.moviePage;
+                const currentUserId = data.currentUserId;
+                const userRole = data.userRole;
+                const action = data.action;
+                console.log(userRole, currentUserId, action);
+
+                if (action === "save" || action === "update" || action === "delete") {
+                    updateTable(moviePage, currentUserId, userRole);
+                }
+
+
+            });
+        });
+    }
+
+    function updateTable(moviePage, currentUserId, userRole) {
+        const currentPage = getCurrentPage();
+        const tableBody = document.querySelector("tbody");
+        tableBody.innerHTML = "";
+
+
+        moviePage.content.forEach(movie => {
+            const row = document.createElement("tr");
+            let editButton = '';
+            let deleteButton = '';
+
+            if (movie.authorID == currentUserId || userRole == 'ADMIN') {
+                editButton = `<button data-id="${movie.movieId}" class="edit-movie-button btn">Edit</button>`;
+                deleteButton = `<button data-id="${movie.movieId}" class="delete-movie-button btn">Delete</button>`;
+            }
+            row.innerHTML = `
+            <td>${movie.name}</td>
+            <td>${movie.authorID}</td>
+            <td>${movie.creationDate}</td>
+            <td>${movie.coordinates.x + '; ' + movie.coordinates.y}</td>
+            <td>${movie.oscarsCount}</td>
+            <td>${movie.budget}</td>
+            <td>${movie.totalBoxOffice}</td>
+            <td>${movie.mpaaRating}</td>
+            <td>${movie.length}</td>
+            <td>${movie.goldenPalmCount}</td>
+            <td>${movie.genre}</td>
+            <td>${movie.director.name}</td>
+            <td>${movie.director.eyeColor}</td>
+            <td>${movie.director.hairColor}</td>
+            <td>${movie.director.location.x + '; ' + movie.director.location.y + '; ' + movie.director.location.z}</td>
+            <td>${movie.director.passportID}</td>
+            <td>${movie.director.nationality}</td>
+            <td>${movie.operator.name}</td>
+            <td>${movie.operator.eyeColor}</td>
+            <td>${movie.operator.hairColor}</td>
+            <td>${movie.operator.location.x + '; ' + movie.operator.location.y + '; ' + movie.operator.location.z}</td>
+            <td>${movie.operator.passportID}</td>
+            <td>${movie.operator.nationality}</td>
+            <td>${movie.screenwriter.name}</td>
+            <td>${movie.screenwriter.eyeColor}</td>
+            <td>${movie.screenwriter.hairColor}</td>
+            <td>${movie.screenwriter.location.x + '; ' + movie.screenwriter.location.y + '; ' + movie.screenwriter.location.z}</td>
+            <td>${movie.screenwriter.passportID}</td>
+            <td>${movie.screenwriter.nationality}</td>
+            <td>
+                ${editButton}
+                ${deleteButton}
+            </td>
+        `;
+            tableBody.appendChild(row);
+        });
+
+        setCurrentPage(currentPage);
+    }
+
+    function getCurrentPage() {
+        const pageInput = document.querySelector("input[name='page']");
+        return pageInput ? parseInt(pageInput.value) : 0;
+    }
+
+    function setCurrentPage(page) {
+        const pageInput = document.querySelector("input[name='page']");
+        if (pageInput) pageInput.value = page;
+    }
+    window.onload = connect;
 </script>
 
 </body>
