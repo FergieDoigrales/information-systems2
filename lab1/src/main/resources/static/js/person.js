@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
     const personForm = document.querySelector("#createPersonModal form");
-    const socket = new SockJS('/ws');
-    const stompClient = Stomp.over(socket);
     if (personForm) {
         personForm.addEventListener("submit", function (event) {
             event.preventDefault();
@@ -34,8 +32,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(data => {
                     if (data.success) {
                         document.getElementById("createPersonModal").style.display = "none";
-                        openModal("createMovieModal");
                         updatePersonsList(data.updatedPersonsList);
+                        openModal("createMovieModal");
                         location.reload();
                     } else if (data.errors) {
                         for (const [field, message] of Object.entries(data.errors)) {
@@ -63,7 +61,6 @@ document.addEventListener("DOMContentLoaded", function () {
             selectors.forEach(selector => {
                 const selectElement = document.querySelector(selector);
                 if (selectElement) {
-                    selectElement.innerHTML = "";
                     selectElement.innerHTML = persons
                         .map(person => `<option value="${person.id}">${person.name}</option>`)
                         .join("");
@@ -72,3 +69,4 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
+

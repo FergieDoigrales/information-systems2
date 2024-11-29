@@ -19,31 +19,16 @@ import org.springframework.ui.Model;
 @Transactional(readOnly = true)
 @Service
 public class PreparePageService {
-    private final MoviesRepository moviesRepository;
-    private final CoordinatesService coordinatesService;
-    private final PeopleService peopleService;
-    private final LocationService locationService;
+
+    private final MoviesService moviesService;
 
     @Autowired
-    public PreparePageService(MoviesRepository moviesRepository,
-                         CoordinatesService coordinatesService, PeopleService peopleService, LocationService locationService) {
-        this.moviesRepository = moviesRepository;
-        this.coordinatesService = coordinatesService;
-        this.peopleService = peopleService;
-        this.locationService = locationService;
+    public PreparePageService(MoviesService moviesService) {
+        this.moviesService = moviesService;
     }
-    public void prepareHomePage(Model model, int page, int size, String sort, String openModal) {
+    public Page<Movie> getMoviePage(int page, int size, String sort) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
-        Page<Movie> moviePage = moviesRepository.findAll(pageable);
-        model.addAttribute("moviePage", moviePage);
-        model.addAttribute("movie", new Movie());
-        model.addAttribute("coordinatesList", coordinatesService.findAll());
-        model.addAttribute("personsList", peopleService.findAll());
-        model.addAttribute("mpaaRatings", MpaaRating.values());
-        model.addAttribute("genres", MovieGenre.values());
-        model.addAttribute("locationsList", locationService.findAll());
-        model.addAttribute("colors", Color.values());
-        model.addAttribute("nationalities", Country.values());
-        model.addAttribute("openModal", openModal);
+        return moviesService.findAll(pageable);
     }
+
 }

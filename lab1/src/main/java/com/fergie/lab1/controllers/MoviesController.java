@@ -9,10 +9,7 @@ import com.fergie.lab1.models.Person;
 import com.fergie.lab1.models.enums.MovieGenre;
 import com.fergie.lab1.models.enums.MpaaRating;
 import com.fergie.lab1.security.CustomUserDetails;
-import com.fergie.lab1.services.CoordinatesService;
-import com.fergie.lab1.services.LocationService;
-import com.fergie.lab1.services.MoviesService;
-import com.fergie.lab1.services.PeopleService;
+import com.fergie.lab1.services.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,6 +37,7 @@ public class MoviesController {
     private final CoordinatesService coordinatesService;
 
     private final ModelMapper modelMapper;
+    private final PreparePageService preparePageService;
 
     private final SimpMessagingTemplate messagingTemplate;
 
@@ -48,26 +46,43 @@ public class MoviesController {
 
     @Autowired
     public MoviesController(MoviesService moviesService, ModelMapper modelMapper, PeopleService peopleService,
-                            CoordinatesService coordinatesService, SimpMessagingTemplate messagingTemplate) {
+                            CoordinatesService coordinatesService, SimpMessagingTemplate messagingTemplate,
+                            PreparePageService preparePageService) {
         this.moviesService = moviesService;
         this.modelMapper = modelMapper;
         this.peopleService = peopleService;
         this.coordinatesService = coordinatesService;
+        this.preparePageService = preparePageService;
         this.messagingTemplate = messagingTemplate;
     }
 
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveMovie(@ModelAttribute("movie") Movie movie) {
+    public ResponseEntity<?> saveMovie(@ModelAttribute("movie") MovieDTO movieDTO,
+                                       @RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "10") int size,
+                                       @RequestParam(defaultValue = "name") String sort) {
         try {
-
+            Movie movie = convertToMovie(movieDTO);
             setRelatedEntities(movie);
             CustomUserDetails userDetails = getUserInfo();
             moviesService.addMovie(movie, userDetails.getId());
-            messagingTemplate.convertAndSend("/topic/movies", movie);
+            Page<Movie> moviePage = preparePageService.getMoviePage(page, size, sort);
+            messagingTemplate.convertAndSend("/topic/movies", Map.of(
+                    "moviePage", moviePage,
+                    "currentUserId", userDetails.getId(),
+                    "userRole", userDetails.getRole().name(),
+                    "action", "save"
+            ));
+            System.out.println("Sending moviePage: " + moviePage);
 
             return ResponseEntity.ok(Map.of(
-                    "success", true
+                    "success", true,
+                    "moviePage", moviePage.getContent(),
+                    "totalPages", moviePage.getTotalPages(),
+                    "currentPage", moviePage.getNumber(),
+                    "currentUserId", userDetails.getId(),
+                    "userRole", userDetails.getRole().name()
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
@@ -88,19 +103,31 @@ public class MoviesController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<?> updateMovie(@ModelAttribute("movie") MovieDTO movieDTO) {
-        System.out.println("Entering updateMovie method");
+    public ResponseEntity<?> updateMovie(@ModelAttribute("movie") MovieDTO movieDTO,
+                                         @RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "10") int size,
+                                         @RequestParam(defaultValue = "name") String sort) {
+
         CustomUserDetails userDetails = getUserInfo();
         Movie movie = convertToMovie(movieDTO);
 
         try {
             setRelatedEntities(movie);
             Movie updatedMovie = moviesService.updateMovie(userDetails.getRole(), userDetails.getId(), movie.getMovieId(), movie);
-            messagingTemplate.convertAndSend("/topic/movies", movie);
+            Page<Movie> moviePage = preparePageService.getMoviePage(page, size, sort);
+            messagingTemplate.convertAndSend("/topic/movies", Map.of(
+                    "moviePage", moviePage,
+                    "currentUserId", userDetails.getId(),
+                    "userRole", userDetails.getRole().name(),
+                    "action", "update"
+            ));
             if (updatedMovie != null) {
                 return ResponseEntity.ok(Map.of(
                         "success", true,
-                        "updatedMovie", updatedMovie
+                        "updatedMovie", updatedMovie,
+                        "moviePage", moviePage.getContent(),
+                        "totalPages", moviePage.getTotalPages(),
+                        "currentPage", moviePage.getNumber()
                 ));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
@@ -117,11 +144,24 @@ public class MoviesController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteMovie(@PathVariable Long id) {
+    public ResponseEntity<?> deleteMovie(@PathVariable Long id,
+                                         @RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "10") int size,
+                                         @RequestParam(defaultValue = "name") String sort) {
         CustomUserDetails userDetails = getUserInfo();
-        try{
-        moviesService.deleteMovie(userDetails.getRole(), userDetails.getId(), id);
-        return ResponseEntity.ok(Map.of("success", true));
+        try {
+            moviesService.deleteMovie(userDetails.getRole(), userDetails.getId(), id);
+            Page<Movie> moviePage = preparePageService.getMoviePage(page, size, sort);
+            messagingTemplate.convertAndSend("/topic/movies", Map.of(
+                    "moviePage", moviePage,
+                    "currentUserId", userDetails.getId(),
+                    "userRole", userDetails.getRole().name(),
+                    "action", "delete"
+            ));
+            return ResponseEntity.ok(Map.of("success", true,
+                    "moviePage", moviePage.getContent(),
+                    "totalPages", moviePage.getTotalPages(),
+                    "currentPage", moviePage.getNumber()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("success", false, "message", "Access denied"));
         }
@@ -144,4 +184,5 @@ public class MoviesController {
     private MovieDTO convertToMovieDTO(Movie movie) {
         return modelMapper.map(movie, MovieDTO.class);
     }
+
 }

@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+
     const movieForm = document.querySelector("#createMovieModal form");
     if (movieForm) {
         movieForm.addEventListener("submit", function (event) {
@@ -68,6 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
                 .then(data => {
                     if (data.success) {
+                        movieForm.reset();
                         document.getElementById("createMovieModal").style.display = "none";
                     } else {
                         alert(data.message || "Failed to save movie.");
@@ -79,9 +81,11 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    document.querySelectorAll(".edit-movie-button").forEach(button => {
-        button.addEventListener("click", function () {
-            const movieId = this.getAttribute("data-id");
+    const tableBody = document.querySelector("tbody");
+
+    tableBody.addEventListener("click", function (event) {
+        if (event.target && event.target.classList.contains("edit-movie-button")) {
+            const movieId = event.target.getAttribute("data-id");
             fetch(`/movie/${movieId}`)
                 .then(response => response.json())
                 .then(movie => {
@@ -119,23 +123,24 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 })
                 .catch(error => console.error("Error fetching movie:", error));
-        });
-    });
+        }
 
-    document.querySelectorAll(".delete-movie-button").forEach(button => {
-        button.addEventListener("click", function () {
-            const movieId = this.getAttribute("data-id");
-            if (confirm("Are you sure you want to delete this movie?")) {
-                fetch(`/movie/${movieId}`, { method: "DELETE" })
-                    .then(response => {
-                        if (response.ok) {
-                            location.reload();
-                        } else {
-                            alert("Failed to delete movie");
-                        }
-                    })
-                    .catch(error => console.error("Error deleting movie:", error));
-            }
+
+        document.querySelectorAll(".delete-movie-button").forEach(button => {
+            button.addEventListener("click", function () {
+                const movieId = this.getAttribute("data-id");
+                if (confirm("Are you sure you want to delete this movie?")) {
+                    fetch(`/movie/${movieId}`, { method: "DELETE" })
+                        .then(response => {
+                            if (response.ok) {
+                                // location.reload();
+                            } else {
+                                alert("Failed to delete movie");
+                            }
+                        })
+                        .catch(error => console.error("Error deleting movie:", error));
+                }
+            });
         });
     });
 });
