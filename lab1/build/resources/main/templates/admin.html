@@ -43,9 +43,9 @@
 </table>
 
 <div class="pagination">
-    <a th:if="${auditPage.hasPrevious()}" th:href="@{/admin/movies(page=${auditPage.number - 1}, size=${auditPage.size})}">Previous</a>
+    <a th:if="${auditPage.hasPrevious()}" th:href="@{/admin/audit(page=${auditPage.number - 1}, size=${auditPage.size})}">Previous</a>
     <span>Page <span th:text="${auditPage.number + 1}">1</span> of <span th:text="${auditPage.totalPages}">1</span></span>
-    <a th:if="${auditPage.hasNext()}" th:href="@{/admin/movies(page=${auditPage.number + 1}, size=${auditPage.size})}">Next</a>
+    <a th:if="${auditPage.hasNext()}" th:href="@{/admin/audit(page=${auditPage.number + 1}, size=${auditPage.size})}">Next</a>
 </div>
 
 <div id="adminRequestsModal" class="modal">

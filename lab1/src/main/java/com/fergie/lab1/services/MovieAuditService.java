@@ -3,7 +3,6 @@ package com.fergie.lab1.services;
 import com.fergie.lab1.models.Movie;
 import com.fergie.lab1.models.MovieAudit;
 import com.fergie.lab1.repositories.MovieAuditRepository;
-import com.fergie.lab1.repositories.MoviesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

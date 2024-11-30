@@ -20,7 +20,7 @@
         <span th:text="${username}">Username</span>
         <a th:href="@{/auth/logout}">Logout</a>
         <a th:if="${userRole == 'ADMIN'}"
-           th:href="@{/admin}">Admin Panel</a>
+           th:href="@{/admin/audit}">Admin Panel</a>
     </div>
 </div>
 <button class="open-modal" id="addButton" data-modal="createMovieModal">Create Movie</button>
@@ -272,6 +272,7 @@
     </div>
 </div>
 
+
 <script src="/static/js/modal.js"></script>
 <script src="/static/js/movie.js"></script>
 <script src="/static/js/location.js"></script>
@@ -283,34 +284,40 @@
 <script type="text/javascript">
     let stompClient = null;
 
-    function connect() {
+    async function connect() {
         const socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
 
-        stompClient.connect({}, function (frame) {
+        stompClient.connect({}, async function (frame) {
             console.log('Connected: ' + frame);
+
+            await getCurrentUser();
 
             stompClient.subscribe('/topic/movies', function (response) {
                 const data = JSON.parse(response.body);
                 const moviePage = data.moviePage;
-                const currentUserId = data.currentUserId;
-                const userRole = data.userRole;
-                const action = data.action;
-                console.log(userRole, currentUserId, action);
 
-                if (action === "save" || action === "update" || action === "delete") {
-                    updateTable(moviePage, currentUserId, userRole);
+                if (window.currentUser) {
+                    const currentUserId = window.currentUser.id;
+                    const userRole = window.currentUser.role;
+                    const currentPage = window.currentUser.page;
+
+                    const action = data.action;
+                    console.log(userRole, currentUserId, action);
+
+                    if (action === "save" || action === "update" || action === "delete") {
+                        updateTable(moviePage, currentUserId, userRole, currentPage);
+                    }
                 }
-
-
             });
         });
     }
 
-    function updateTable(moviePage, currentUserId, userRole) {
-        const currentPage = getCurrentPage();
+    function updateTable(moviePage, currentUserId, userRole, currentPage) {
+        // const currentPage = getCurrentPage();
         const tableBody = document.querySelector("tbody");
         tableBody.innerHTML = "";
+
 
         moviePage.content.forEach(movie => {
             const row = document.createElement("tr");
@@ -371,8 +378,26 @@
         const pageInput = document.querySelector("input[name='page']");
         if (pageInput) pageInput.value = page;
     }
-
+    async function getCurrentUser() {
+        try {
+            const response = await fetch('/movie/current-user');
+            if (!response.ok) {
+                throw new Error('Failed to fetch current user');
+            }
+            const user = await response.json();
+            window.currentUser = {
+                id: user.currentUserId,
+                role: user.userRole,
+                page: user.page
+            };
+            console.log("Current user:", window.currentUser);
+        } catch (err) {
+            console.error('Error fetching current user:', err);
+        }
+    }
     window.onload = connect;
+
+
 </script>
 
 </body>

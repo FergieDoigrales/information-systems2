@@ -5,6 +5,8 @@ import com.fergie.lab1.models.enums.AccessRole;
 import com.fergie.lab1.repositories.CoordinatesRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,16 +25,18 @@ public class CoordinatesService {
         this.modelMapper = modelMapper;
     }
 
-    public Coordinates findById(Long id){
-        Optional<Coordinates> coordinates = coordinatesRepository.findById(id);
+    @Cacheable(value = "coordinatesCache", key = "#coordinatesId")
+    public Coordinates findById(Long coordinatesId){
+        Optional<Coordinates> coordinates = coordinatesRepository.findById(coordinatesId);
         return coordinates.orElse(null);
     }
 
-
+    @Cacheable(value = "coordinatesCache", key = "'allCoordinates'")
     public List<Coordinates> findAll(){
         return coordinatesRepository.findAll();
     }
 
+    @CacheEvict(value = "coordinatesCache", allEntries = true)
     @Transactional
     public Coordinates addCoordinates(Coordinates coordinates, Long authorId) {
         return coordinatesRepository.save(enrichCoordinates(coordinates, authorId));

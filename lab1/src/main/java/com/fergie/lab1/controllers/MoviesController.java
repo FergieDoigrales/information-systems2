@@ -1,31 +1,19 @@
 package com.fergie.lab1.controllers;
 
-import com.fergie.lab1.dto.LocationDTO;
 import com.fergie.lab1.dto.MovieDTO;
-import com.fergie.lab1.models.Coordinates;
-import com.fergie.lab1.models.Location;
 import com.fergie.lab1.models.Movie;
-import com.fergie.lab1.models.Person;
-import com.fergie.lab1.models.enums.MovieGenre;
-import com.fergie.lab1.models.enums.MpaaRating;
 import com.fergie.lab1.security.CustomUserDetails;
 import com.fergie.lab1.services.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -55,7 +43,6 @@ public class MoviesController {
         this.preparePageService = preparePageService;
         this.messagingTemplate = messagingTemplate;
     }
-
 
     @PostMapping("/save")
     public ResponseEntity<?> saveMovie(@ModelAttribute("movie") MovieDTO movieDTO,
@@ -101,7 +88,6 @@ public class MoviesController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-
     @PostMapping("/update")
     public ResponseEntity<?> updateMovie(@ModelAttribute("movie") MovieDTO movieDTO,
                                          @RequestParam(defaultValue = "0") int page,
@@ -117,8 +103,6 @@ public class MoviesController {
             Page<Movie> moviePage = preparePageService.getMoviePage(page, size, sort);
             messagingTemplate.convertAndSend("/topic/movies", Map.of(
                     "moviePage", moviePage,
-                    "currentUserId", userDetails.getId(),
-                    "userRole", userDetails.getRole().name(),
                     "action", "update"
             ));
             if (updatedMovie != null) {
@@ -165,6 +149,16 @@ public class MoviesController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("success", false, "message", "Access denied"));
         }
+    }
+
+    @GetMapping("/current-user")
+    public ResponseEntity<Map<String, Object>> getCurrentUser(@RequestParam(defaultValue = "0") int page) {
+        CustomUserDetails userDetails = getUserInfo();
+        return ResponseEntity.ok(Map.of(
+                "currentUserId", userDetails.getId(),
+                "userRole", userDetails.getRole().name(),
+                "page", page
+        ));
     }
 
     private CustomUserDetails getUserInfo() {

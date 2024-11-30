@@ -5,6 +5,8 @@ import com.fergie.lab1.models.enums.AccessRole;
 import com.fergie.lab1.repositories.LocationRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,15 +25,17 @@ public class LocationService {
         this.modelMapper = modelMapper;
     }
 
+    @Cacheable(value = "locationCache", key = "#locationId")
     public Location findById(Long locationId){
         Optional<Location> location = locationRepository.findById(locationId);
         return location.orElse(null);
     }
-
+    @Cacheable(value = "locationCache", key = "'allLocation'")
     public List<Location> findAll(){
         return locationRepository.findAll();
     }
 
+    @CacheEvict(value = "locationCache", allEntries = true)
     @Transactional
     public Location addLocation(Location location, Long authorId) {
         return locationRepository.save(enrichLocation(location, authorId));

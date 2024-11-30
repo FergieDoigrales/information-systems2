@@ -1,11 +1,10 @@
 package com.fergie.lab1.services;
-
-import com.fergie.lab1.models.Movie;
 import com.fergie.lab1.models.Person;
-import com.fergie.lab1.models.User;
 import com.fergie.lab1.models.enums.AccessRole;
 import com.fergie.lab1.repositories.PeopleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,20 +20,23 @@ public class PeopleService {
         this.peopleRepository = peopleRepository;
     }
 
+    @Cacheable(value = "peopleCache", key = "#personId")
     public Person findById(Long personId){
         Optional<Person> person = peopleRepository.findById(personId);
         return person.orElse(null);
     }
 
+    @Cacheable(value = "peopleCache", key = "#name")
     public Person findByName(String name){
         Optional<Person> person = peopleRepository.findByName(name);
         return person.orElse(null);
     }
-
+    @Cacheable(value = "peopleCache", key = "'allPeople'")
     public List<Person> findAll(){
         return peopleRepository.findAll();
     }
 
+    @CacheEvict(value = "peopleCache", allEntries = true)
     @Transactional
     public Person addPerson(Person person, Long authorId) {
         return peopleRepository.save(enrichPerson(person, authorId));

@@ -1,59 +1,48 @@
 package com.fergie.lab1.services;
 
 import com.fergie.lab1.models.Movie;
-import com.fergie.lab1.models.User;
 import com.fergie.lab1.models.enums.*;
 import com.fergie.lab1.repositories.MoviesRepository;
-import com.fergie.lab1.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 
-import java.util.List;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
 @Service
 public class MoviesService {
     private final MoviesRepository moviesRepository;
-    private final CoordinatesService coordinatesService;
-    private final PeopleService peopleService;
-    private final LocationService locationService;
     private final MovieAuditService movieAuditService;
 
     @Autowired
-    public MoviesService(MoviesRepository moviesRepository, UsersRepository usersRepository, MovieAuditService movieAuditService,
-                         CoordinatesService coordinatesService, PeopleService peopleService, LocationService locationService) {
+    public MoviesService(MoviesRepository moviesRepository, MovieAuditService movieAuditService) {
         this.moviesRepository = moviesRepository;
-        this.coordinatesService = coordinatesService;
-        this.peopleService = peopleService;
-        this.locationService = locationService;
         this.movieAuditService = movieAuditService;
     }
 
+    @Cacheable(value = "moviesCache", key = "#Id")
     public Movie findById(Long Id){
         Optional<Movie> movie = moviesRepository.findById(Id);
         return movie.orElse(null);
     }
 
+    @Cacheable(value = "moviesCache", key = "#name")
     public Movie findByName(String name){
         Optional<Movie> movie = moviesRepository.findByName(name);
         return movie.orElse(null);
     }
 
-//    public List<Movie> findAll(){
-//        return moviesRepository.findAll();
-//    }
+    @Cacheable(value = "moviesCache", key = "#pageable")
     public Page<Movie> findAll(Pageable pageable) {
         return moviesRepository.findAll(pageable);
     }
 
+    @CacheEvict(value = "moviesCache", allEntries = true)
     @Transactional
     public void addMovie(Movie movie, Long authorID) {
         Movie addedMovie = moviesRepository.save(enrichMovie(movie, authorID));
@@ -61,6 +50,7 @@ public class MoviesService {
 
     }
 
+    @CacheEvict(value = "moviesCache", allEntries = true)
     @Transactional
     public Movie updateMovie(AccessRole userRole, Long authorID, Long id, Movie updatedMovie) {
         Optional<Movie> existingMovie = moviesRepository.findById(id);
@@ -93,6 +83,7 @@ public class MoviesService {
         }
     }
 
+    @CacheEvict(value = "moviesCache", allEntries = true)
     @Transactional
     public void deleteMovie(AccessRole userRole, Long authorID, Long id) {
         Optional<Movie> existingMovie = moviesRepository.findById(id);
