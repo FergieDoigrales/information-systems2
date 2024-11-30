@@ -127,6 +127,7 @@
         <h2>Movie</h2>
         <form th:action="@{/movie/save}" method="post" th:object="${movie}">
             <input type="hidden" th:field="*{movieId}" />
+            <input type="hidden" id="page" name="page" th:value="${currentPage}" />
             <label for="name">Name:</label>
             <input type="text" id="name" th:field="*{name}" required/><br/>
 
@@ -295,18 +296,25 @@
 
             stompClient.subscribe('/topic/movies', function (response) {
                 const data = JSON.parse(response.body);
-                const moviePage = data.moviePage;
+                const updatedMoviePage = data.moviePage;
+                const updatedMoviePageNumber = data.currentPage;
 
                 if (window.currentUser) {
                     const currentUserId = window.currentUser.id;
                     const userRole = window.currentUser.role;
                     const currentPage = window.currentUser.page;
+                    const moviePage = window.currentUser.moviePage;
 
                     const action = data.action;
                     console.log(userRole, currentUserId, action);
 
+
                     if (action === "save" || action === "update" || action === "delete") {
+                        if (currentPage == updatedMoviePageNumber){
+                            updateTable(updatedMoviePage, currentUserId, userRole, updatedMoviePageNumber);
+                        } else {
                         updateTable(moviePage, currentUserId, userRole, currentPage);
+                        }
                     }
                 }
             });
@@ -314,7 +322,6 @@
     }
 
     function updateTable(moviePage, currentUserId, userRole, currentPage) {
-        // const currentPage = getCurrentPage();
         const tableBody = document.querySelector("tbody");
         tableBody.innerHTML = "";
 
@@ -380,7 +387,10 @@
     }
     async function getCurrentUser() {
         try {
-            const response = await fetch('/movie/current-user');
+            const page = document.getElementById('page').value;
+            const size = 10;
+            const sort = 'name';
+            const response = await fetch(`/movie/current-user?page=${page}&size=${size}&sort=${sort}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch current user');
             }
@@ -388,7 +398,8 @@
             window.currentUser = {
                 id: user.currentUserId,
                 role: user.userRole,
-                page: user.page
+                page: user.currentPage,
+                moviePage: user.movies
             };
             console.log("Current user:", window.currentUser);
         } catch (err) {

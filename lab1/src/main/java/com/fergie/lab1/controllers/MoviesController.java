@@ -59,7 +59,8 @@ public class MoviesController {
                     "moviePage", moviePage,
                     "currentUserId", userDetails.getId(),
                     "userRole", userDetails.getRole().name(),
-                    "action", "save"
+                    "action", "save",
+                    "currentPage", moviePage.getNumber()
             ));
             System.out.println("Sending moviePage: " + moviePage);
 
@@ -103,7 +104,8 @@ public class MoviesController {
             Page<Movie> moviePage = preparePageService.getMoviePage(page, size, sort);
             messagingTemplate.convertAndSend("/topic/movies", Map.of(
                     "moviePage", moviePage,
-                    "action", "update"
+                    "action", "update",
+                    "currentPage", moviePage.getNumber()
             ));
             if (updatedMovie != null) {
                 return ResponseEntity.ok(Map.of(
@@ -140,7 +142,8 @@ public class MoviesController {
                     "moviePage", moviePage,
                     "currentUserId", userDetails.getId(),
                     "userRole", userDetails.getRole().name(),
-                    "action", "delete"
+                    "action", "delete",
+                    "currentPage", moviePage.getNumber()
             ));
             return ResponseEntity.ok(Map.of("success", true,
                     "moviePage", moviePage.getContent(),
@@ -152,12 +155,17 @@ public class MoviesController {
     }
 
     @GetMapping("/current-user")
-    public ResponseEntity<Map<String, Object>> getCurrentUser(@RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<Map<String, Object>> getCurrentUser(@RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "10") int size,
+                                                              @RequestParam(defaultValue = "name") String sort) {
+        Page<Movie> moviePage = preparePageService.getMoviePage(page, size, sort);
         CustomUserDetails userDetails = getUserInfo();
+        System.out.println("Received parameters - page: " + page + ", size: " + size + ", sort: " + sort);
         return ResponseEntity.ok(Map.of(
+                "movies", moviePage,
                 "currentUserId", userDetails.getId(),
                 "userRole", userDetails.getRole().name(),
-                "page", page
+                "currentPage", moviePage.getNumber()
         ));
     }
 

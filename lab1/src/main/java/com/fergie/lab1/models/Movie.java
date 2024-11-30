@@ -1,6 +1,7 @@
 package com.fergie.lab1.models;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fergie.lab1.models.enums.MovieGenre;
 import com.fergie.lab1.models.enums.MpaaRating;
 import jakarta.persistence.*;
@@ -40,6 +41,7 @@ public class Movie {
     @CreatedDate
     @NotNull(message="field cannot be null")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private java.util.Date creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
 
     @Column(name = "oscars_count")

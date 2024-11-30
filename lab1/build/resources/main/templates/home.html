@@ -127,6 +127,7 @@
         <h2>Movie</h2>
         <form th:action="@{/movie/save}" method="post" th:object="${movie}">
             <input type="hidden" th:field="*{movieId}" />
+            <input type="hidden" id="page" name="page" th:value="${currentPage}" />
             <label for="name">Name:</label>
             <input type="text" id="name" th:field="*{name}" required/><br/>
 
@@ -293,20 +294,36 @@
 
             await getCurrentUser();
 
+
+
+            // fetch(`/movie/current-user?page=${page}&size=${size}&sort=${sort}`)
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         console.log(data);
+            //     })
+            //     .catch(error => console.error('Error:', error));
+
             stompClient.subscribe('/topic/movies', function (response) {
                 const data = JSON.parse(response.body);
-                const moviePage = data.moviePage;
+                const updatedMoviePage = data.moviePage;
+                const updatedMoviePageNumber = data.currentPage;
 
                 if (window.currentUser) {
                     const currentUserId = window.currentUser.id;
                     const userRole = window.currentUser.role;
                     const currentPage = window.currentUser.page;
+                    const moviePage = window.currentUser.moviePage;
 
                     const action = data.action;
                     console.log(userRole, currentUserId, action);
 
+
                     if (action === "save" || action === "update" || action === "delete") {
+                        if (currentPage == updatedMoviePageNumber){
+                            updateTable(updatedMoviePage, currentUserId, userRole, updatedMoviePageNumber);
+                        } else {
                         updateTable(moviePage, currentUserId, userRole, currentPage);
+                        }
                     }
                 }
             });
@@ -314,7 +331,6 @@
     }
 
     function updateTable(moviePage, currentUserId, userRole, currentPage) {
-        // const currentPage = getCurrentPage();
         const tableBody = document.querySelector("tbody");
         tableBody.innerHTML = "";
 
@@ -380,7 +396,10 @@
     }
     async function getCurrentUser() {
         try {
-            const response = await fetch('/movie/current-user');
+            const page = document.getElementById('page').value;
+            const size = 10;
+            const sort = 'name';
+            const response = await fetch(`/movie/current-user?page=${page}&size=${size}&sort=${sort}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch current user');
             }
@@ -388,7 +407,8 @@
             window.currentUser = {
                 id: user.currentUserId,
                 role: user.userRole,
-                page: user.page
+                page: user.currentPage,
+                moviePage: user.movies
             };
             console.log("Current user:", window.currentUser);
         } catch (err) {
@@ -402,3 +422,431 @@
 
 </body>
 </html>
+
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <title>Home</title>-->
+<!--    <link rel="stylesheet" href="/static/css/home.css">-->
+<!--</head>-->
+<!--<body th:attr="data-open-modal=${openModal}">-->
+<!--<div class="header">-->
+<!--    <h1> <a th:href="@{/home}" style="cursor: pointer; color: hotpink; text-decoration: none;">MovieStorage</a></h1>-->
+<!--    <div class="user-info">-->
+<!--        <span th:text="${userRole}"-->
+<!--              class="open-modal"-->
+<!--              data-modal="roleRequestModal"-->
+<!--              style="cursor: pointer; text-decoration: underline; color: hotpink;"-->
+<!--              th:if="${userRole != 'ADMIN'}">Role</span>-->
+<!--        <span th:text="${userRole}"-->
+<!--              class="open-modal"-->
+<!--              style="cursor: not-allowed; text-decoration: underline; color: hotpink;"-->
+<!--              th:if="${userRole == 'ADMIN'}">Role</span>-->
+<!--        <span th:text="${username}">Username</span>-->
+<!--        <a th:href="@{/auth/logout}">Logout</a>-->
+<!--        <a th:if="${userRole == 'ADMIN'}"-->
+<!--           th:href="@{/admin/audit}">Admin Panel</a>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<button class="open-modal" id="addButton" data-modal="createMovieModal">Create Movie</button>-->
+<!--<div class="table-container">-->
+<!--    <table class="styled-table">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>Name</th>-->
+<!--            <th>Author</th>-->
+<!--            <th>Creation Date</th>-->
+<!--            <th>Coordinates</th>-->
+<!--            <th>Oscars Count</th>-->
+<!--            <th>Budget</th>-->
+<!--            <th>Total Box Office</th>-->
+<!--            <th>MPAA Rating</th>-->
+<!--            <th>Length</th>-->
+<!--            <th>Golden Palm Count</th>-->
+<!--            <th>Genre</th>-->
+<!--            <th>Director</th>-->
+<!--            <th>Director eye color</th>-->
+<!--            <th>Director hair color</th>-->
+<!--            <th>Director location</th>-->
+<!--            <th>Director passportID</th>-->
+<!--            <th>Director nationality</th>-->
+<!--            <th>Operator</th>-->
+<!--            <th>Operator eye color</th>-->
+<!--            <th>Operator hair color</th>-->
+<!--            <th>Operator location</th>-->
+<!--            <th>Operator passportID</th>-->
+<!--            <th>Operator nationality</th>-->
+<!--            <th>Screenwriter</th>-->
+<!--            <th>Screenwriter eye color</th>-->
+<!--            <th>Screenwriter hair color</th>-->
+<!--            <th>Screenwriter location</th>-->
+<!--            <th>Screenwriter passportID</th>-->
+<!--            <th>Screenwriter nationality</th>-->
+
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr th:each="movie : ${moviePage.content}">-->
+<!--            <td th:text="${movie.name}">Name</td>-->
+<!--            <td th:text="${movie.authorID}">Author</td>-->
+<!--            <td th:text="${movie.creationDate}">Creation Date</td>-->
+<!--            <td th:text="${movie.coordinates.x + '; ' + movie.coordinates.y}">Coordinates</td>-->
+<!--            <td th:text="${movie.oscarsCount}">Oscars Count</td>-->
+<!--            <td th:text="${movie.budget}">Budget</td>-->
+<!--            <td th:text="${movie.totalBoxOffice}">Total Box Office</td>-->
+<!--            <td th:text="${movie.mpaaRating}">MPAA Rating</td>-->
+<!--            <td th:text="${movie.length}">Length</td>-->
+<!--            <td th:text="${movie.goldenPalmCount}">Golden Palm Count</td>-->
+<!--            <td th:text="${movie.genre}">Genre</td>-->
+<!--            <td th:text="${movie.director.name}">Director</td>-->
+<!--            <td th:text="${movie.director.eyeColor}">Director eye color</td>-->
+<!--            <td th:text="${movie.director.hairColor}">Director hair color</td>-->
+<!--            <td th:text="${movie.director.location.x + '; ' + movie.director.location.y  + '; ' + movie.director.location.z }">Director location</td>-->
+<!--            <td th:text="${movie.director.passportID}">Director passportID</td>-->
+<!--            <td th:text="${movie.director.nationality}">Director nationality</td>-->
+<!--            <td th:text="${movie.operator.name}">Operator</td>-->
+<!--            <td th:text="${movie.operator.eyeColor}">Operator eye color</td>-->
+<!--            <td th:text="${movie.operator.hairColor}">Operator hair color</td>-->
+<!--            <td th:text="${movie.operator.location.x + '; ' + movie.operator.location.y  + '; ' + movie.operator.location.z }">Operator location</td>-->
+<!--            <td th:text="${movie.operator.passportID}">Operator passportID</td>-->
+<!--            <td th:text="${movie.operator.nationality}">Operator nationality</td>-->
+<!--            <td th:text="${movie.screenwriter.name}">Screenwriter</td>-->
+<!--            <td th:text="${movie.screenwriter.eyeColor}">Screenwriter eye color</td>-->
+<!--            <td th:text="${movie.screenwriter.hairColor}">Screenwriter hair color</td>-->
+<!--            <td th:text="${movie.screenwriter.location.x + '; ' + movie.screenwriter.location.y  + '; ' + movie.screenwriter.location.z }">Screenwriter location</td>-->
+<!--            <td th:text="${movie.screenwriter.passportID}">Screenwriter passportID</td>-->
+<!--            <td th:text="${movie.screenwriter.nationality}">Screenwriter nationality</td>-->
+<!--            <td>-->
+<!--                <button th:if="${movie.authorID == currentUserId || userRole == 'ADMIN'}"-->
+<!--                        th:attr="data-id=${movie.movieId}"-->
+<!--                        class="edit-movie-button btn">Edit</button>-->
+<!--                <button th:if="${movie.authorID == currentUserId || userRole == 'ADMIN'}"-->
+<!--                        th:attr="data-id=${movie.movieId}"-->
+<!--                        class="delete-movie-button btn">Delete</button>-->
+<!--            </td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+
+<!--    <div class="pagination">-->
+<!--        <a th:if="${moviePage.hasPrevious()}" th:href="@{/home(page=${moviePage.number - 1}, size=${moviePage.size})}">Previous</a>-->
+<!--        <span>Page <span th:id="currentPage" th:text="${moviePage.number + 1}">1</span> of <span th:text="${moviePage.totalPages}">1</span></span>-->
+<!--        <a th:if="${moviePage.hasNext()}" th:href="@{/home(page=${moviePage.number + 1}, size=${moviePage.size})}">Next</a>-->
+<!--    </div>-->
+
+<!--</div>-->
+
+<!--<div id="roleRequestModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;">-->
+<!--    <div style="background-color: white; margin: 10% auto; padding: 20px; border-radius: 8px; width: 30%; text-align: center;">-->
+<!--        <form th:action="@{/sendRequest}" method="post" th:object="${request}">-->
+<!--            <h3>Submit a request for the admin role</h3>-->
+<!--            <p>Are you sure you want to submit a request to become an administrator?</p>-->
+<!--            <button type="submit" style="margin-right: 10px;">Submit</button>-->
+
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<div id="createMovieModal" class="modal">-->
+<!--    <div class="modal-content">-->
+<!--        <span class="close">&times;</span>-->
+<!--        <h2>Movie</h2>-->
+<!--        <form th:action="@{/movie/save}" method="post" th:object="${movie}">-->
+<!--            <input type="hidden" name="page" th:value="${currentPage}" />-->
+<!--            <input type="hidden" th:field="*{movieId}" />-->
+<!--            <label for="name">Name:</label>-->
+<!--            <input type="text" id="name" th:field="*{name}" required/><br/>-->
+
+<!--            <label for="coordinates">Coordinates:</label>-->
+<!--            <select id="coordinates" th:field="*{coordinates.id}">-->
+<!--                <option th:each="coordinate : ${coordinatesList}"-->
+<!--                        th:value="${coordinate.id}"-->
+<!--                        th:text="${coordinate.x + ', ' + coordinate.y}">Coordinates</option>-->
+<!--            </select>-->
+<!--            or-->
+<!--            <button type="button" class="open-modal" data-modal="createCoordinatesModal">Create Coordinates</button><br/>-->
+
+<!--            <label for="oscarsCount">Oscars Count:</label>-->
+<!--            <input type="number" id="oscarsCount" th:field="*{oscarsCount}" required/><br/>-->
+<!--            <div style="color:red" class="error-message" id="oscarsCountError"></div>-->
+
+<!--            <label for="budget">Budget:</label>-->
+<!--            <input type="number" id="budget" th:field="*{budget}" step="0.01" required/><br/>-->
+<!--            <div style="color:red" class="error-message" id="budgetError"></div>-->
+
+<!--            <label for="totalBoxOffice">Total Box Office:</label>-->
+<!--            <input type="number" id="totalBoxOffice" th:field="*{totalBoxOffice}" step="0.01" required/><br/>-->
+<!--            <div style="color:red" class="error-message" id="totalBoxOfficeError"></div>-->
+
+<!--            <label for="mpaaRating">MPAA Rating:</label>-->
+<!--            <select id="mpaaRating" th:field="*{mpaaRating}">-->
+<!--                <option th:each="rating : ${mpaaRatings}" th:value="${rating}" th:text="${rating}">Rating</option>-->
+<!--            </select><br/>-->
+
+<!--            <label for="director">Director:</label>-->
+<!--            <select id="director" th:field="*{director.id}">-->
+<!--                <option th:each="person : ${personsList}" th:value="${person.id}" th:text="${person.name}">Person</option>-->
+<!--            </select>-->
+<!--            or-->
+<!--            <button type="button" class="open-modal" data-modal="createPersonModal">Create Person</button><br/>-->
+
+<!--            <label for="screenwriter">Screenwriter:</label>-->
+<!--            <select id="screenwriter" th:field="*{screenwriter.id}">-->
+<!--                <option th:each="person : ${personsList}" th:value="${person.id}" th:text="${person.name}">Person</option>-->
+<!--            </select>-->
+<!--            or-->
+<!--            <button type="button" class="open-modal" data-modal="createPersonModal">Create Person</button><br/>-->
+
+<!--            <label for="operator">Operator:</label>-->
+<!--            <select id="operator" th:field="*{operator.id}" required>-->
+<!--                <option th:each="person : ${personsList}" th:value="${person.id}" th:text="${person.name}">Person</option>-->
+<!--            </select>-->
+<!--            or-->
+<!--            <button type="button" class="open-modal" data-modal="createPersonModal">Create Person</button><br/>-->
+
+<!--            <label for="length">Length:</label>-->
+<!--            <input type="number" id="length" th:field="*{length}" step="1"/><br/>-->
+<!--            <div style="color:red" class="error-message" id="lengthError"></div>-->
+
+<!--            <label for="goldenPalmCount">Golden Palm Count:</label>-->
+<!--            <input type="number" id="goldenPalmCount" th:field="*{goldenPalmCount}" step="1"/><br/>-->
+<!--            <div style="color:red" class="error-message" id="goldenPalmCountError"></div>-->
+
+<!--            <label for="genre">Genre:</label>-->
+<!--            <select id="genre" th:field="*{genre}">-->
+<!--                <option th:each="genre : ${genres}" th:value="${genre}" th:text="${genre}">Genre</option>-->
+<!--            </select><br/>-->
+
+<!--            <button type="submit">Save</button>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->
+
+
+<!--<div id="createPersonModal" class="modal">-->
+<!--    <div class="modal-content">-->
+<!--        <span class="close">&times;</span>-->
+<!--        <h2>Create a New Person</h2>-->
+<!--        <form th:action="@{/person/save}" method="post" th:object="${person}">-->
+<!--            <input type="hidden" name="parentModal" value="createMovieModal"/>-->
+<!--            <label for="personname">Name:</label>-->
+<!--            <input type="text" id="personname" th:field="*{name}" required/><br/>-->
+<!--            <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>-->
+
+<!--            <label for="location">Location:</label>-->
+<!--            <select id="location" th:field="*{location.id}">-->
+<!--                <option th:each="location : ${locationsList}"-->
+<!--                        th:value="${location.id}"-->
+<!--                        th:text="${location.x + ', ' + location.y + ', ' + location.z}">Coordinates</option>-->
+<!--            </select>-->
+<!--            or-->
+<!--            <button type="button" class="open-modal" data-modal="createLocationModal">Create Location</button><br/>-->
+
+
+<!--            <label for="passportID">passportID:</label>-->
+<!--            <input type="number" id="passportID" th:field="*{passportID}" step="1" required minlength="10" maxlength="43"/><br/>-->
+<!--            <div style="color:red" th:if="${#fields.hasErrors('passportID')}" th:errors="*{passportID}">Username Error</div>-->
+<!--            <div style="color:red" class="error-message" id="passportIDError"></div>-->
+
+<!--            <label for="eyeColor">eye color:</label>-->
+<!--            <select id="eyeColor" th:field="*{eyeColor}">-->
+<!--                <option th:each="color : ${colors}" th:value="${color}" th:text="${color}">Color</option>-->
+<!--            </select><br/>-->
+
+<!--            <label for="hairColor">hair color:</label>-->
+<!--            <select id="hairColor" th:field="*{hairColor}">-->
+<!--                <option th:each="color : ${colors}" th:value="${color}" th:text="${color}">Color</option>-->
+<!--            </select><br/>-->
+
+<!--            <label for="nationality">Genre:</label>-->
+<!--            <select id="nationality" th:field="*{nationality}">-->
+<!--                <option th:each="nationality : ${nationalities}" th:value="${nationality}" th:text="${nationality}">Nationality</option>-->
+<!--            </select><br/>-->
+
+<!--            <button type="submit">Save</button>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<div id="createLocationModal" class="modal">-->
+<!--    <div class="modal-content">-->
+<!--        <span class="close">&times;</span>-->
+<!--        <h2>Create a New Location</h2>-->
+<!--        <form th:action="@{/location/save}" method="post" th:object="${location}">-->
+
+<!--            <label for="x">x:</label>-->
+<!--            <input type="number" id="x" th:field="*{x}" step="0.01" required/><br/>-->
+<!--            <label for="y">y:</label>-->
+<!--            <input type="number" id="y" th:field="*{y}" step="0.01" required/><br/>-->
+<!--            <label for="z">z:</label>-->
+<!--            <input type="number" id="z" th:field="*{z}" step="1" required/><br/>-->
+<!--            <button type="submit" id="savePersonBtn">Save</button>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<div id="createCoordinatesModal" class="modal">-->
+<!--    <div class="modal-content">-->
+<!--        <span class="close">&times;</span>-->
+<!--        <h2>Create a New Coordinates</h2>-->
+<!--        <form th:action="@{/coordinates/save}" method="post" th:object="${coordinates}">-->
+<!--            <label for="x">x:</label>-->
+<!--            <input type="number" id="coord_x" th:field="*{x}" step="1" required/><br/>-->
+<!--            <label for="y">y:</label>-->
+<!--            <input type="number" id="coord_y" th:field="*{y}" step="1" required/><br/>-->
+<!--            <button type="submit">Save</button>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->
+
+
+<!--<script src="/static/js/modal.js"></script>-->
+<!--<script src="/static/js/movie.js"></script>-->
+<!--<script src="/static/js/location.js"></script>-->
+<!--<script src="/static/js/person.js"></script>-->
+<!--<script src="/static/js/coordinates.js" ></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>-->
+
+<!--<script type="text/javascript">-->
+<!--    let stompClient = null;-->
+
+<!--    async function connect() {-->
+<!--        const socket = new SockJS('/ws');-->
+<!--        stompClient = Stomp.over(socket);-->
+
+<!--        stompClient.connect({}, async function (frame) {-->
+<!--            console.log('Connected: ' + frame);-->
+
+<!--            await getCurrentUser();-->
+<!--            const currentPage = getCurrentPage();-->
+<!--            await loadPage(currentPage);-->
+
+<!--            stompClient.subscribe('/topic/movies', function (response) {-->
+<!--                const data = JSON.parse(response.body);-->
+<!--                const moviePage = data.moviePage;-->
+<!--                const currentPage = data.currentPage;-->
+<!--                // const currentPage = getCurrentPage();-->
+<!--                console.log(currentPage)-->
+
+<!--                if (window.currentUser) {-->
+<!--                    const currentUserId = window.currentUser.id;-->
+<!--                    const userRole = window.currentUser.role;-->
+<!--                    // const currentPage = window.currentUser.page;-->
+
+<!--                    const action = data.action;-->
+<!--                    console.log(userRole, currentUserId, action);-->
+
+<!--                    if (action === "save" || action === "update" || action === "delete") {-->
+<!--                        updateTable(moviePage, currentUserId, userRole);-->
+<!--                    }-->
+<!--                }-->
+<!--            });-->
+<!--        });-->
+<!--    }-->
+
+<!--    function updateTable(moviePage, currentUserId, userRole) {-->
+<!--        // const currentPage = getCurrentPage();-->
+<!--        const tableBody = document.querySelector("tbody");-->
+<!--        tableBody.innerHTML = "";-->
+
+
+<!--        moviePage.content.forEach(movie => {-->
+<!--            const row = document.createElement("tr");-->
+<!--            let editButton = '';-->
+<!--            let deleteButton = '';-->
+
+<!--            if (movie.authorID == currentUserId || userRole == 'ADMIN') {-->
+<!--                editButton = `<button data-id="${movie.movieId}" class="edit-movie-button btn">Edit</button>`;-->
+<!--                deleteButton = `<button data-id="${movie.movieId}" class="delete-movie-button btn">Delete</button>`;-->
+<!--            }-->
+<!--            row.innerHTML = `-->
+<!--            <td>${movie.name}</td>-->
+<!--            <td>${movie.authorID}</td>-->
+<!--            <td>${movie.creationDate}</td>-->
+<!--            <td>${movie.coordinates.x + '; ' + movie.coordinates.y}</td>-->
+<!--            <td>${movie.oscarsCount}</td>-->
+<!--            <td>${movie.budget}</td>-->
+<!--            <td>${movie.totalBoxOffice}</td>-->
+<!--            <td>${movie.mpaaRating}</td>-->
+<!--            <td>${movie.length}</td>-->
+<!--            <td>${movie.goldenPalmCount}</td>-->
+<!--            <td>${movie.genre}</td>-->
+<!--            <td>${movie.director.name}</td>-->
+<!--            <td>${movie.director.eyeColor}</td>-->
+<!--            <td>${movie.director.hairColor}</td>-->
+<!--            <td>${movie.director.location.x + '; ' + movie.director.location.y + '; ' + movie.director.location.z}</td>-->
+<!--            <td>${movie.director.passportID}</td>-->
+<!--            <td>${movie.director.nationality}</td>-->
+<!--            <td>${movie.operator.name}</td>-->
+<!--            <td>${movie.operator.eyeColor}</td>-->
+<!--            <td>${movie.operator.hairColor}</td>-->
+<!--            <td>${movie.operator.location.x + '; ' + movie.operator.location.y + '; ' + movie.operator.location.z}</td>-->
+<!--            <td>${movie.operator.passportID}</td>-->
+<!--            <td>${movie.operator.nationality}</td>-->
+<!--            <td>${movie.screenwriter.name}</td>-->
+<!--            <td>${movie.screenwriter.eyeColor}</td>-->
+<!--            <td>${movie.screenwriter.hairColor}</td>-->
+<!--            <td>${movie.screenwriter.location.x + '; ' + movie.screenwriter.location.y + '; ' + movie.screenwriter.location.z}</td>-->
+<!--            <td>${movie.screenwriter.passportID}</td>-->
+<!--            <td>${movie.screenwriter.nationality}</td>-->
+<!--            <td>-->
+<!--                ${editButton}-->
+<!--                ${deleteButton}-->
+<!--            </td>-->
+<!--        `;-->
+<!--            tableBody.appendChild(row);-->
+<!--        });-->
+
+<!--        setCurrentPage(currentPage);-->
+<!--    }-->
+
+<!--    function getCurrentPage() {-->
+<!--        const currentPageElement = document.querySelector("#currentPage");-->
+<!--        return currentPageElement ? parseInt(currentPageElement.innerText) : 1;-->
+<!--    }-->
+
+<!--    function setCurrentPage(page) {-->
+<!--        currentPage = page;-->
+<!--        const pageInput = document.querySelector("input[name='page']");-->
+<!--        if (pageInput) pageInput.value = page;-->
+<!--    }-->
+<!--    async function getCurrentUser() {-->
+<!--        try {-->
+<!--            const response = await fetch('/movie/current-user');-->
+<!--            if (!response.ok) {-->
+<!--                throw new Error('Failed to fetch current user');-->
+<!--            }-->
+<!--            const user = await response.json();-->
+<!--            window.currentUser = {-->
+<!--                id: user.currentUserId,-->
+<!--                role: user.userRole,-->
+<!--                // page: user.page-->
+<!--            };-->
+<!--            console.log("Current user:", window.currentUser);-->
+<!--        } catch (err) {-->
+<!--            console.error('Error fetching current user:', err);-->
+<!--        }-->
+<!--    }-->
+<!--    window.onload = connect;-->
+
+<!--    async function loadPage(page) {-->
+<!--        try {-->
+<!--            const response = await fetch(`/movie/page?page=${page}&size=10`);-->
+<!--            if (!response.ok) {-->
+<!--                throw new Error('Ошибка загрузки страницы');-->
+<!--            }-->
+<!--            const data = await response.json();-->
+<!--            const moviePage = data.moviePage;-->
+
+<!--            updateTable(moviePage, window.currentUser.id, window.currentUser.role);-->
+<!--        } catch (err) {-->
+<!--            console.error('Ошибка при загрузке страницы:', err);-->
+<!--        }-->
+<!--    }-->
+
+
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
