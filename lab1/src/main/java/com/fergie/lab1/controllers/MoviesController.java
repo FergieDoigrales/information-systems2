@@ -7,6 +7,9 @@ import com.fergie.lab1.services.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -14,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -28,8 +32,6 @@ public class MoviesController {
     private final PreparePageService preparePageService;
 
     private final SimpMessagingTemplate messagingTemplate;
-
-
 
 
     @Autowired
@@ -152,6 +154,11 @@ public class MoviesController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("success", false, "message", "Access denied"));
         }
+    }
+
+    @GetMapping("/search")
+    public Page<Movie> searchMovies(@RequestParam("query") String query, Pageable pageable) {
+        return moviesService.searchMovies(query, pageable);
     }
 
     @GetMapping("/current-user")

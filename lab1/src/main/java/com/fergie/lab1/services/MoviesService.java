@@ -3,6 +3,7 @@ package com.fergie.lab1.services;
 import com.fergie.lab1.models.Movie;
 import com.fergie.lab1.models.enums.*;
 import com.fergie.lab1.repositories.MoviesRepository;
+import com.fergie.lab1.specification.MovieSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -30,6 +31,12 @@ public class MoviesService {
         Optional<Movie> movie = moviesRepository.findById(Id);
         return movie.orElse(null);
     }
+
+    public Page<Movie> searchMovies(String query, Pageable pageable) {
+        MovieSpecification specification = new MovieSpecification(query);
+        return moviesRepository.findAll(specification, pageable);
+    }
+
 
     @Cacheable(value = "moviesCache", key = "#name")
     public Movie findByName(String name){
@@ -79,7 +86,7 @@ public class MoviesService {
 
             return moviesRepository.save(movie);
         } else {
-            return null; // если пользователь не найден
+            return null;
         }
     }
 

@@ -25,38 +25,39 @@
 </div>
 <button class="open-modal" id="addButton" data-modal="createMovieModal">Create Movie</button>
 <div class="table-container">
+    <label for="search-input"><input type="text" id="search-input" placeholder="Search..." onkeyup="applySearchFilter()"></label>
     <table class="styled-table">
         <thead>
         <tr>
-            <th>Name</th>
-            <th>Author</th>
-            <th>Creation Date</th>
-            <th>Coordinates</th>
-            <th>Oscars Count</th>
-            <th>Budget</th>
-            <th>Total Box Office</th>
-            <th>MPAA Rating</th>
-            <th>Length</th>
-            <th>Golden Palm Count</th>
-            <th>Genre</th>
-            <th>Director</th>
-            <th>Director eye color</th>
-            <th>Director hair color</th>
-            <th>Director location</th>
-            <th>Director passportID</th>
-            <th>Director nationality</th>
-            <th>Operator</th>
-            <th>Operator eye color</th>
-            <th>Operator hair color</th>
-            <th>Operator location</th>
-            <th>Operator passportID</th>
-            <th>Operator nationality</th>
-            <th>Screenwriter</th>
-            <th>Screenwriter eye color</th>
-            <th>Screenwriter hair color</th>
-            <th>Screenwriter location</th>
-            <th>Screenwriter passportID</th>
-            <th>Screenwriter nationality</th>
+            <th onclick="sortTable('name')">Name</th>
+            <th onclick="sortTable('authorID')">Author</th>
+            <th onclick="sortTable('creationDate')">Creation Date</th>
+            <th onclick="sortTable('coordinates')">Coordinates</th>
+            <th onclick="sortTable('oscarsCount')">Oscars Count</th>
+            <th onclick="sortTable('budget')">Budget</th>
+            <th onclick="sortTable('totalBoxOffice')">Total Box Office</th>
+            <th onclick="sortTable('mpaaRating')">MPAA Rating</th>
+            <th onclick="sortTable('length')">Length</th>
+            <th onclick="sortTable('goldenPalmCount')">Golden Palm Count</th>
+            <th onclick="sortTable('genre')">Genre</th>
+            <th onclick="sortTable('director.name')">Director</th>
+            <th onclick="sortTable('director.eyeColor')">Director eye color</th>
+            <th onclick="sortTable('director.hairColor')">Director hair color</th>
+            <th onclick="sortTable('director.location')">Director location</th>
+            <th onclick="sortTable('director.passportID')">Director passportID</th>
+            <th onclick="sortTable('director.nationality')">Director nationality</th>
+            <th onclick="sortTable('operator.name')">Operator</th>
+            <th onclick="sortTable('operator.eyeColor')">Operator eye color</th>
+            <th onclick="sortTable('operator.hairColor')">Operator hair color</th>
+            <th onclick="sortTable('operator.location')">Operator location</th>
+            <th onclick="sortTable('operator.passportID')">Operator passportID</th>
+            <th onclick="sortTable('operator.nationality')">Operator nationality</th>
+            <th onclick="sortTable('screenwriter.name')">Screenwriter</th>
+            <th onclick="sortTable('screenwriter.eyeColor')">Screenwriter eye color</th>
+            <th onclick="sortTable('screenwriter.hairColor')">Screenwriter hair color</th>
+            <th onclick="sortTable('screenwriter.location')">Screenwriter location</th>
+            <th onclick="sortTable('screenwriter.passportID')">Screenwriter passportID</th>
+            <th onclick="sortTable('screenwriter.nationality')">Screenwriter nationality</th>
 
         </tr>
         </thead>
@@ -105,7 +106,7 @@
 
     <div class="pagination">
         <a th:if="${moviePage.hasPrevious()}" th:href="@{/home(page=${moviePage.number - 1}, size=${moviePage.size})}">Previous</a>
-        <span>Page <span th:text="${moviePage.number + 1}">1</span> of <span th:text="${moviePage.totalPages}">1</span></span>
+        <span>Page <span id="currentPage" th:text="${moviePage.number + 1}">1</span> of <span th:text="${moviePage.totalPages}">1</span></span>
         <a th:if="${moviePage.hasNext()}" th:href="@{/home(page=${moviePage.number + 1}, size=${moviePage.size})}">Next</a>
     </div>
 </div>
@@ -374,11 +375,10 @@
         });
 
         setCurrentPage(currentPage);
-    }
-
-    function getCurrentPage() {
-        const pageInput = document.querySelector("input[name='page']");
-        return pageInput ? parseInt(pageInput.value) : 0;
+        const currentPageElement = document.querySelector("#currentPage");
+        if (currentPageElement) {
+            currentPageElement.textContent = currentPage + 1;
+        }
     }
 
     function setCurrentPage(page) {
@@ -406,6 +406,27 @@
             console.error('Error fetching current user:', err);
         }
     }
+
+    async function applySearchFilter() {
+        const searchTerm = document.getElementById('search-input').value.trim();
+        await getCurrentUser();
+        const currentUserId = window.currentUser.id;
+        const userRole = window.currentUser.role;
+        const currentPage = 0;
+        await fetchMovies(currentUserId, userRole, searchTerm, currentPage);
+    }
+
+    function fetchMovies(currentUserId, userRole, searchTerm, currentPage) {
+        const url = `/movie/search?query=${encodeURIComponent(searchTerm)}&page=${currentPage}&size=10`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                updateTable(data, currentUserId, userRole, currentPage);
+            })
+            .catch(error => console.error('Error fetching movies:', error));
+    }
+
     window.onload = connect;
 
 
