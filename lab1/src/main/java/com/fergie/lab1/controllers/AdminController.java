@@ -51,24 +51,6 @@ public class AdminController {
         return "admin";
     }
 
-//    @GetMapping("/requests")
-//    public String getRequests(Model model,
-//                            @RequestParam(defaultValue = "0") int page,
-//                            @RequestParam(defaultValue = "9") int size,
-//                            @RequestParam(defaultValue = "username") String sort
-//    ) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-//        model.addAttribute("username", authentication.getName());
-//        model.addAttribute("roles", authentication.getAuthorities());
-//        Pageable pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
-//        Page<RoleRequest> requestsPage = requestsService.findAll(pageable);
-//        model.addAttribute("requestsPage", requestsPage);
-//        model.addAttribute("currentUserId", userDetails.getId());
-//        model.addAttribute("userRole", userDetails.getRole().name());
-//        return "admin";
-//    }
-
 
     @PostMapping("/approve/{id}")
     public ResponseEntity<Map<String, Object>> approveRequest(@PathVariable Long id) {

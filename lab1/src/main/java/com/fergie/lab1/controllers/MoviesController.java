@@ -16,8 +16,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -81,6 +79,7 @@ public class MoviesController {
             ));
         }
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Movie> getMovieById(@PathVariable Long id) {
         Movie movie = moviesService.findById(id);
@@ -91,6 +90,7 @@ public class MoviesController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+
     @PostMapping("/update")
     public ResponseEntity<?> updateMovie(@ModelAttribute("movie") MovieDTO movieDTO,
                                          @RequestParam(defaultValue = "0") int page,
@@ -156,24 +156,41 @@ public class MoviesController {
         }
     }
 
+
     @GetMapping("/search")
-    public Page<Movie> searchMovies(@RequestParam("query") String query, Pageable pageable) {
+    public Page<Movie> searchMovies(@RequestParam("query") String query,
+                                    @RequestParam int page,
+                                    @RequestParam int size,
+                                    @RequestParam String sort,
+                                    @RequestParam String sortOrder) {
+        Sort.Order sortOrderObj = getSortObject(sort, sortOrder);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortOrderObj));
         return moviesService.searchMovies(query, pageable);
     }
 
     @GetMapping("/current-user")
-    public ResponseEntity<Map<String, Object>> getCurrentUser(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<Map<String, Object>> getCurrentUser(@RequestParam("query") String query,
+                                                              @RequestParam(defaultValue = "0") int page,
                                                               @RequestParam(defaultValue = "10") int size,
-                                                              @RequestParam(defaultValue = "name") String sort) {
-        Page<Movie> moviePage = preparePageService.getMoviePage(page, size, sort);
+                                                              @RequestParam String sort,
+                                                              @RequestParam String sortOrder) {
+        Sort.Order sortOrderObj = getSortObject(sort, sortOrder);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortOrderObj));
+        Page<Movie> moviePage = moviesService.searchMovies(query, pageable);
         CustomUserDetails userDetails = getUserInfo();
-        System.out.println("Received parameters - page: " + page + ", size: " + size + ", sort: " + sort);
         return ResponseEntity.ok(Map.of(
                 "movies", moviePage,
                 "currentUserId", userDetails.getId(),
                 "userRole", userDetails.getRole().name(),
                 "currentPage", moviePage.getNumber()
         ));
+    }
+
+
+    private Sort.Order getSortObject(String sortField, String sortOrder) {
+        return "desc".equalsIgnoreCase(sortOrder)
+                ? Sort.Order.desc(sortField)
+                : Sort.Order.asc(sortField);
     }
 
     private CustomUserDetails getUserInfo() {
@@ -195,3 +212,4 @@ public class MoviesController {
     }
 
 }
+

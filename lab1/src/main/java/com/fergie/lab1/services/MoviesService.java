@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -108,6 +109,12 @@ public class MoviesService {
         movie.setCreationDate(new java.util.Date());
         movie.setAuthorID(authorId);
         return movie;
+    }
+
+    private Sort.Order getSortObject(String sortField, String sortOrder) {
+        return "desc".equalsIgnoreCase(sortOrder)
+                ? Sort.Order.desc(sortField)
+                : Sort.Order.asc(sortField);
     }
 
 }

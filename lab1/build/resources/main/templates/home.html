@@ -313,8 +313,6 @@
                     if (action === "save" || action === "update" || action === "delete") {
                         if (currentPage == updatedMoviePageNumber){
                             updateTable(updatedMoviePage, currentUserId, userRole, updatedMoviePageNumber);
-                        } else {
-                        updateTable(moviePage, currentUserId, userRole, currentPage);
                         }
                     }
                 }
@@ -385,12 +383,14 @@
         const pageInput = document.querySelector("input[name='page']");
         if (pageInput) pageInput.value = page;
     }
+
+    let currentSortField = 'name';
+    let currentSortOrder = 'asc';
+    let currentSearchTerm = '';
     async function getCurrentUser() {
         try {
             const page = document.getElementById('page').value;
-            const size = 10;
-            const sort = 'name';
-            const response = await fetch(`/movie/current-user?page=${page}&size=${size}&sort=${sort}`);
+            const response = await fetch(`/movie/current-user?query=${encodeURIComponent(currentSearchTerm)}&page=${page}&size=10&sort=${currentSortField}&sortOrder=${currentSortOrder}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch current user');
             }
@@ -406,18 +406,32 @@
             console.error('Error fetching current user:', err);
         }
     }
-
     async function applySearchFilter() {
         const searchTerm = document.getElementById('search-input').value.trim();
+        currentSearchTerm = searchTerm;
         await getCurrentUser();
         const currentUserId = window.currentUser.id;
         const userRole = window.currentUser.role;
         const currentPage = 0;
-        await fetchMovies(currentUserId, userRole, searchTerm, currentPage);
+        await fetchMovies(currentUserId, userRole, searchTerm, currentPage, currentSortField, currentSortOrder);
     }
 
-    function fetchMovies(currentUserId, userRole, searchTerm, currentPage) {
-        const url = `/movie/search?query=${encodeURIComponent(searchTerm)}&page=${currentPage}&size=10`;
+    async function sortTable(field) {
+        if (currentSortField === field) {
+            currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSortField = field;
+            currentSortOrder = 'asc';
+        }
+        await getCurrentUser();
+        const currentUserId = window.currentUser.id;
+        const userRole = window.currentUser.role;
+        const currentPage = window.currentUser.page;
+        await fetchMovies(currentUserId, userRole, currentSearchTerm, currentPage, currentSortField, currentSortOrder);
+    }
+
+    function fetchMovies(currentUserId, userRole, searchTerm, currentPage, sortField, sortOrder) {
+        const url = `/movie/search?query=${encodeURIComponent(searchTerm)}&page=${currentPage}&size=10&sort=${sortField}&sortOrder=${sortOrder}`;
 
         fetch(url)
             .then(response => response.json())
@@ -427,8 +441,8 @@
             .catch(error => console.error('Error fetching movies:', error));
     }
 
-    window.onload = connect;
 
+    window.onload = connect;
 
 </script>
 
