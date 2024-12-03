@@ -1,6 +1,7 @@
 package com.fergie.lab1.services;
 
 import com.fergie.lab1.models.Movie;
+import com.fergie.lab1.models.Person;
 import com.fergie.lab1.models.enums.*;
 import com.fergie.lab1.repositories.MoviesRepository;
 import com.fergie.lab1.specification.MovieSpecification;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
@@ -38,6 +40,22 @@ public class MoviesService {
         return moviesRepository.findAll(specification, pageable);
     }
 
+
+    public int getMovieCountByGenre(String genre) {
+        return moviesRepository.countMoviesByGenre(genre);
+    }
+
+    public List<Integer> getUniqueGoldenPalmCounts() {
+        return moviesRepository.findUniqueGoldenPalmCounts();
+    }
+
+//    public Movie getMovieWithMinDirector() {
+//        return moviesRepository.findMovieWithMinDirector()
+//                .orElseThrow(() -> new RuntimeException("No movie found with a valid or null director"));
+//    }
+    public String getMovieWithMinDirector() {
+        return moviesRepository.findMovieWithMinDirector();
+    }
 
     @Cacheable(value = "moviesCache", key = "#name")
     public Movie findByName(String name){

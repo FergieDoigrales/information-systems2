@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Functions</title>
+    <link rel="stylesheet" href="/static/css/operations.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.26.0/dist/axios.min.js"></script>
+</head>
+<body>
+<div class="header">
+    <h1> <a th:href="@{/home}" style="cursor: pointer; color: hotpink; text-decoration: none;">MovieStorage</a></h1>
+    <h1> <a th:href="@{/operations}" style="cursor: pointer; color: hotpink; text-decoration: none;">Operations</a></h1>
+    <div class="user-info">
+        <span th:text="${userRole}"
+              class="open-modal"
+              data-modal="roleRequestModal"
+              style="cursor: pointer; text-decoration: underline; color: hotpink;">Role</span>
+        <span th:text="${username}">Username</span>
+        <a th:href="@{/auth/logout}">Logout</a>
+        <a th:if="${userRole == 'ADMIN'}"
+           th:href="@{/admin/audit}">Admin Panel</a>
+    </div>
+</div>
+<div class="container mt-5">
+    <h1 class="mb-4">Special Functions</h1>
+
+    <div class="mb-3">
+        <label for="genre" class="form-label">Enter Genre</label>
+        <input type="text" class="form-control" id="genre" placeholder="Genre">
+        <button class="btn btn-pink mt-2" onclick="getMovieCountByGenre()">Get Movie Count By Genre</button>
+        <div id="movieCountResult" class="mt-3"></div>
+    </div>
+
+    <div class="mb-3">
+        <button class="btn btn-pink" onclick="getUniqueGoldenPalmCounts()">Get Unique Golden Palm Counts</button>
+        <div id="goldenPalmCountsResult" class="mt-3"></div>
+    </div>
+
+    <div class="mb-3">
+        <button class="btn btn-pink" onclick="getMovieWithMinDirector()">Get Movie With Min Director</button>
+        <div id="minDirectorMovieResult" class="mt-3"></div>
+    </div>
+
+    <div class="mb-3">
+        <button class="btn btn-pink" onclick="getOperatorsWithoutOscar()">Get Operators Without Oscar</button>
+        <div id="operatorsResult" class="mt-3"></div>
+    </div>
+
+    <div class="mb-3">
+        <button class="btn btn-pink" onclick="getScreenwritersWithoutOscar()">Get Screenwriters Without Oscar</button>
+        <div id="screenwritersResult" class="mt-3"></div>
+    </div>
+</div>
+
+<script src="/static/js/operations.js"></script>
+
+</body>
+</html>

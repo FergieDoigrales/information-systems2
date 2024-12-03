@@ -1,0 +1,133 @@
+CREATE OR REPLACE FUNCTION count_movies_by_genre(p_genre VARCHAR)
+RETURNS INTEGER AS $$
+BEGIN
+    RETURN (SELECT COUNT(*) FROM movie WHERE genre = p_genre);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_unique_golden_palm_counts()
+RETURNS TABLE (golden_palm_count INT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT DISTINCT m.golden_palm_count
+    FROM movie m
+    WHERE m.golden_palm_count IS NOT NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION get_screenwriters_without_oscar()
+RETURNS TABLE (person_id BIGINT, name VARCHAR, eye_color VARCHAR, hair_color VARCHAR, location_id BIGINT, passport_id VARCHAR, nationality VARCHAR, author_id BIGINT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT p.person_id, p.name, p.eye_color::VARCHAR, p.hair_color::VARCHAR, p.location_id, p.passport_id, p.nationality::VARCHAR, p.author_id
+    FROM person p
+    WHERE p.person_id IN (
+        SELECT screenwriter_id
+        FROM movie
+        WHERE oscars_count = 1
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_operators_without_oscar()
+RETURNS TABLE (person_id BIGINT, name VARCHAR, eye_color VARCHAR, hair_color VARCHAR, location_id BIGINT, passport_id VARCHAR, nationality VARCHAR, author_id BIGINT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT p.person_id, p.name, p.eye_color::VARCHAR, p.hair_color::VARCHAR, p.location_id, p.passport_id, p.nationality::VARCHAR, p.author_id
+    FROM person p
+    WHERE p.person_id IN (
+        SELECT operator_id
+        FROM movie
+        WHERE oscars_count = 1
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+CREATE OR REPLACE FUNCTION get_movie_with_min_director()
+RETURNS TABLE (
+    movie_id BIGINT,
+    director_id BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT movie_id, director_id
+    FROM movie
+    WHERE director_id = (
+        SELECT MIN(director_id)
+        FROM movie
+        WHERE director_id IS NOT NULL
+    )
+    LIMIT 1;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION get_movie_with_min_director()
+RETURNS TEXT AS $$
+BEGIN
+    RETURN (
+        SELECT name
+        FROM movie
+        WHERE director_id = (
+            SELECT MIN(director_id)
+            FROM movie
+            WHERE director_id IS NOT NULL
+        )
+        LIMIT 1
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION get_movie_with_min_director()
+RETURNS TABLE (
+    budget double precision,
+    golden_palm_count INT,
+    oscars_count INT,
+    total_box_office REAL,
+    author_id BIGINT,
+    coordinates_id BIGINT,
+    creation_date TIMESTAMP,
+    director_id BIGINT,
+    length BIGINT,
+    movie_id BIGINT,
+    operator_id BIGINT,
+    screenwriter_id BIGINT,
+    genre VARCHAR,
+    mpaa_rating VARCHAR,
+    name VARCHAR,
+    modified_at TIMESTAMP,
+    modified_by VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+            m.budget,
+            m.golden_palm_count,
+            m.oscars_count,
+            m.total_box_office,
+            m.author_id,
+            m.coordinates_id,
+            m.creation_date,
+            m.director_id,
+            m.length,
+            m.movie_id,
+            m.operator_id,
+            m.screenwriter_id,
+            m.genre,
+            m.mpaa_rating,
+            m.name,
+            m.modified_at,
+            m.modified_by
+    FROM movie m
+    WHERE m.director_id = (
+        SELECT MIN(m2.director_id)
+        FROM movie m2
+        WHERE m2.director_id IS NOT NULL
+    )
+    LIMIT 1;
+END;
+$$ LANGUAGE plpgsql;

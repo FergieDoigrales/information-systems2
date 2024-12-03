@@ -5,25 +5,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7d7c57ae-b82a-41d7-9314-588d5f88fd3b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lab1/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab1/src/main/resources/static/css/operations.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab1/src/main/resources/static/js/operations.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab1/src/main/resources/templates/operations.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/.gradle/8.10.2/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/8.10.2/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/.gradle/8.10.2/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/8.10.2/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/controllers/HomeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/controllers/HomeController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/controllers/MoviesController.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/controllers/MoviesController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/controllers/PeopleController.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/controllers/PeopleController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/repositories/MoviesRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/repositories/MoviesRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/repositories/PeopleRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/repositories/PeopleRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/security/UserDetailService.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/security/UserDetailService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/MoviesService.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/MoviesService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/PeopleService.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/PeopleService.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/build/resources/main/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/resources/main/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/resources/main/templates/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/resources/main/templates/admin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/tmp/compileJava/compileTransaction/stash-dir/AdminController.class.uniqueId0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/tmp/compileJava/compileTransaction/stash-dir/MoviesController.class.uniqueId1" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/Lab1Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/Lab1Application.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/controllers/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/controllers/HomeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/controllers/MoviesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/controllers/MoviesController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/controllers/PeopleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/controllers/PeopleController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/repositories/MoviesRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/repositories/MoviesRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/repositories/PeopleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/repositories/PeopleRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/security/UserDetailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/security/UserDetailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/MoviesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/MoviesService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/PeopleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/PeopleService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/resources/static/css/admin-panel.css" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/resources/static/css/admin-panel.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/resources/static/css/home.css" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/resources/static/css/home.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/src/main/resources/templates/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/resources/templates/admin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/resources/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/resources/templates/home.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +66,15 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="CSS File" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -63,12 +91,18 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "android.gradle.sync.needed": "true",
     "git-widget-placeholder": "main",
     "last_opened_file_path": "K:/git/information-systems/lab1/settings.gradle.kts",
+    "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -102,11 +136,21 @@
       <workItem from="1733165106356" duration="276000" />
       <workItem from="1733165408443" duration="874000" />
       <workItem from="1733166675590" duration="3737000" />
-      <workItem from="1733237793850" duration="1480000" />
+      <workItem from="1733237793850" duration="20072000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="org.postgresql.util.PSQLException" package="org.postgresql.util" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

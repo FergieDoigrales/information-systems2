@@ -4,8 +4,10 @@ import com.fergie.lab1.models.User;
 import com.fergie.lab1.models.enums.AccessRole;
 import com.fergie.lab1.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -73,4 +75,10 @@ public class UserDetailService implements UserDetailsService {
         user.setRole(AccessRole.ADMIN);
         usersRepository.save(user);
     }
+
+    public CustomUserDetails getUserInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (CustomUserDetails) authentication.getPrincipal();
+    }
+
 }

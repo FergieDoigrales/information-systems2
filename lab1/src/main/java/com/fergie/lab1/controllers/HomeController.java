@@ -6,6 +6,7 @@ import com.fergie.lab1.models.enums.Country;
 import com.fergie.lab1.models.enums.MovieGenre;
 import com.fergie.lab1.models.enums.MpaaRating;
 import com.fergie.lab1.security.CustomUserDetails;
+import com.fergie.lab1.security.UserDetailService;
 import com.fergie.lab1.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,15 +32,18 @@ public class HomeController {
 
     private final RequestsService requestsService;
 
+    private final UserDetailService userDetailService;
+
     @Autowired
     public HomeController(MoviesService moviesService, PeopleService peopleService,
                           CoordinatesService coordinatesService, LocationService locationService,
-                          RequestsService requestsService) {
+                          RequestsService requestsService, UserDetailService userDetailService) {
         this.moviesService = moviesService;
         this.peopleService = peopleService;
         this.coordinatesService = coordinatesService;
         this.locationService = locationService;
         this.requestsService = requestsService;
+        this.userDetailService = userDetailService;
     }
 
     @GetMapping("/home")
@@ -48,10 +52,9 @@ public class HomeController {
                             @RequestParam(defaultValue = "10") int size,
                             @RequestParam(defaultValue = "name") String sort
     ) {
+//        String token = (String) authentication.getCredentials();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String token = (String) authentication.getCredentials();
-//        Long userId = jwtUtil.getUserIdFromToken(token);
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        CustomUserDetails userDetails = userDetailService.getUserInfo();
         model.addAttribute("username", authentication.getName());
         model.addAttribute("roles", authentication.getAuthorities());
         model.addAttribute("currentPage", page);
@@ -81,6 +84,15 @@ public class HomeController {
                     "message", e.getMessage()
             ));
         }
+    }
+
+    @GetMapping("/operations")
+    public String getOperations(Model model) {
+        CustomUserDetails userDetails = userDetailService.getUserInfo();
+        model.addAttribute("currentUserId", userDetails.getId());
+        model.addAttribute("userRole", userDetails.getRole().name());
+        model.addAttribute("username", userDetails.getUsername());
+        return "operations";
     }
 
 

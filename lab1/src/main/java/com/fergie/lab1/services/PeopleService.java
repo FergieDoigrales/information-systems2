@@ -36,6 +36,13 @@ public class PeopleService {
         return peopleRepository.findAll();
     }
 
+    public List<Person> getScreenwritersWithoutOscar() {
+        return peopleRepository.findScreenwritersWithoutOscar();
+    }
+    public List<Person> getOperatorsWithoutOscar() {
+        return peopleRepository.findOperatorsWithoutOscar();
+    }
+
     @CacheEvict(value = "peopleCache", allEntries = true)
     @Transactional
     public Person addPerson(Person person, Long authorId) {

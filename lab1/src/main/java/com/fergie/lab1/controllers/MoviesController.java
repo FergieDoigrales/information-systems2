@@ -16,6 +16,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -184,6 +186,46 @@ public class MoviesController {
                 "userRole", userDetails.getRole().name(),
                 "currentPage", moviePage.getNumber()
         ));
+    }
+
+    @GetMapping("/count-by-genre")
+    public ResponseEntity<?> getMovieCountByGenre(@RequestParam String genre) {
+        try {
+            int count = moviesService.getMovieCountByGenre(genre);
+
+            return ResponseEntity.ok()
+                    .body(Map.of("genre", genre, "count", count));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of(
+                            "error", "Failed to count movies by genre",
+                            "message", e.getMessage()
+                    ));
+        }
+    }
+
+    @GetMapping("/unique-golden-palm-counts")
+    public ResponseEntity<List<Integer>> getUniqueGoldenPalmCounts() {
+        try {
+            List<Integer> uniquePalmCounts = moviesService.getUniqueGoldenPalmCounts();
+            return ResponseEntity.ok(uniquePalmCounts);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
+        }
+
+    }
+
+    @GetMapping("/min-director")
+    public ResponseEntity<String> getMovieWithMinDirector() {
+        try {
+            String movie = moviesService.getMovieWithMinDirector();
+            return ResponseEntity.ok(movie);
+        } catch (NullPointerException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
+        }
     }
 
 

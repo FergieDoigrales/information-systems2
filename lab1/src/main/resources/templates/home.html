@@ -7,6 +7,7 @@
 <body th:attr="data-open-modal=${openModal}">
 <div class="header">
     <h1> <a th:href="@{/home}" style="cursor: pointer; color: hotpink; text-decoration: none;">MovieStorage</a></h1>
+    <h1> <a th:href="@{/operations}" style="cursor: pointer; color: hotpink; text-decoration: none;">Operations</a></h1>
     <div class="user-info">
         <span th:text="${userRole}"
               class="open-modal"
@@ -23,9 +24,10 @@
            th:href="@{/admin/audit}">Admin Panel</a>
     </div>
 </div>
-<button class="open-modal" id="addButton" data-modal="createMovieModal">Create Movie</button>
+<button class="open-modal" id="addButton" data-modal="createMovieModal" style="margin-bottom: 20px;">Create Movie</button>
 <div class="table-container">
-    <label for="search-input"><input type="text" id="search-input" placeholder="Search..." onkeyup="applySearchFilter()"></label>
+
+    <label for="search-input" class="form-label"><input type="text" id="search-input" class="form-control" placeholder="Search..." onkeyup="applySearchFilter()"></label>
     <table class="styled-table">
         <thead>
         <tr>

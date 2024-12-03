@@ -95,6 +95,30 @@ public ResponseEntity<?> savePerson(@ModelAttribute("person") PersonDTO personDT
         ));
     }
 }
+
+    @GetMapping("/operators-without-oscar")
+    public ResponseEntity<List<Person>> getOperatorsWithoutOscar() {
+        try {
+            List<Person> operators = peopleService.getOperatorsWithoutOscar();
+            return ResponseEntity.ok(operators);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
+        }
+    }
+
+    @GetMapping("/screenwriters-without-oscar")
+    public ResponseEntity<List<Person>> getScreenWritersWithoutOscar() {
+        try {
+            List<Person> screenwriters = peopleService.getScreenwritersWithoutOscar();
+            return ResponseEntity.ok(screenwriters);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
+        }
+    }
+
+
     private Person convertToPerson(PersonDTO personDTO) {
         return modelMapper.map(personDTO, Person.class);
     }

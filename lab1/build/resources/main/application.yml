@@ -31,9 +31,12 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://db:5432/studs
-    username: postgres
-    password: postgres
+#    url: jdbc:postgresql://db:5432/studs
+#    username: postgres
+#    password: postgres
+    url: jdbc:postgresql://localhost:5432/studs
+    username: s367900
+    password: NHuAaqTUhW4OskIS
     driver-class-name: org.postgresql.Driver
   jpa:
     generate-ddl: true
@@ -43,7 +46,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        show-sql: true
 logging:
   level:
     org:
       springframework: trace
+      hibernate.SQL: DEBUG
+      hibernate.type.descriptor.sql.BasicBinder: TRACE
