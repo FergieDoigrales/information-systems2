@@ -15,7 +15,7 @@
         <span th:text="${username}">Username</span>
         <a th:href="@{/auth/logout}">Logout</a>
         <a th:if="${userRole == 'ADMIN'}"
-           th:href="@{/admin}">Admin Panel</a>
+           th:href="@{/admin/audit}">Admin Panel</a>
     </div>
 </div>
 <button class="open-modal" id="reqButton" data-modal="adminRequestsModal">Admin Requests</button>
