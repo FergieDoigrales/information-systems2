@@ -106,10 +106,16 @@
         </tbody>
     </table>
 
-    <div class="pagination">
+    <div class="pagination" id="thymeleaf-pagination">
         <a th:if="${moviePage.hasPrevious()}" th:href="@{/home(page=${moviePage.number - 1}, size=${moviePage.size})}">Previous</a>
         <span>Page <span id="currentPage" th:text="${moviePage.number + 1}">1</span> of <span th:text="${moviePage.totalPages}">1</span></span>
         <a th:if="${moviePage.hasNext()}" th:href="@{/home(page=${moviePage.number + 1}, size=${moviePage.size})}">Next</a>
+    </div>
+
+    <div class="pagination" id="js-pagination" style="visibility: hidden;">
+        <a href="#" id="prev-page" onclick="changePage(currentPagejs - 1)">Previous</a>
+        <span>Page <span id="currentPagejs">1</span> of <span id="totalPages">1</span></span>
+        <a href="#" id="next-page" onclick="changePage(currentPagejs + 1)">Next</a>
     </div>
 </div>
 
@@ -286,6 +292,8 @@
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 
 <script type="text/javascript">
+    let currentPagejs = 0;
+    let totalPagesjs = 0;
     let stompClient = null;
 
     async function connect() {
@@ -315,6 +323,7 @@
                     if (action === "save" || action === "update" || action === "delete") {
                         if (currentPage == updatedMoviePageNumber){
                             updateTable(updatedMoviePage, currentUserId, userRole, updatedMoviePageNumber);
+                            updatePagination(updatedMoviePage.number, window.currentUser.totalPages);
                         }
                     }
                 }
@@ -322,7 +331,7 @@
         });
     }
 
-    function updateTable(moviePage, currentUserId, userRole, currentPage) {
+    function updateTable(moviePage, currentUserId, userRole, currentPage, totalPages) {
         const tableBody = document.querySelector("tbody");
         tableBody.innerHTML = "";
 
@@ -379,6 +388,7 @@
         if (currentPageElement) {
             currentPageElement.textContent = currentPage + 1;
         }
+        updatePagination(moviePage.number, totalPages);
     }
 
     function setCurrentPage(page) {
@@ -401,7 +411,8 @@
                 id: user.currentUserId,
                 role: user.userRole,
                 page: user.currentPage,
-                moviePage: user.movies
+                moviePage: user.movies,
+                totalPages: user.totalPages
             };
             console.log("Current user:", window.currentUser);
         } catch (err) {
@@ -438,9 +449,41 @@
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                updateTable(data, currentUserId, userRole, currentPage);
+                updateTable(data.movies, currentUserId, userRole, currentPage, data.totalPages);
             })
             .catch(error => console.error('Error fetching movies:', error));
+    }
+
+
+    function updatePagination(currentPageNumber, totalPages) {
+
+        document.getElementById("currentPagejs").textContent = currentPageNumber + 1;
+        document.getElementById("totalPages").textContent = totalPages;
+
+        document.getElementById("thymeleaf-pagination").style.visibility = "hidden";
+        document.getElementById("js-pagination").style.visibility = "visible";
+
+        if (currentPageNumber === 0) {
+            document.getElementById("prev-page").style.visibility = "hidden";
+        } else {
+            document.getElementById("prev-page").style.visibility = "visible";
+        }
+
+        if (currentPageNumber === totalPages - 1) {
+            document.getElementById("next-page").style.visibility = "hidden";
+        } else {
+            document.getElementById("next-page").style.visibility = "visible";
+        }
+    }
+
+    function changePage(page) {
+        getCurrentUser();
+        if (page >= 0 && page < window.currentUser.totalPages) {
+            const currentUserId = window.currentUser.id;
+            const userRole = window.currentUser.role;
+            currentPagejs = page;
+            fetchMovies(currentUserId, userRole, currentSearchTerm, currentPagejs, currentSortField, currentSortOrder);
+        }
     }
 
 

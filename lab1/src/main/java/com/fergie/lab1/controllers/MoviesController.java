@@ -159,15 +159,30 @@ public class MoviesController {
     }
 
 
+//    @GetMapping("/search")
+//    public Page<Movie> searchMovies(@RequestParam("query") String query,
+//                                    @RequestParam int page,
+//                                    @RequestParam int size,
+//                                    @RequestParam String sort,
+//                                    @RequestParam String sortOrder) {
+//        Sort.Order sortOrderObj = getSortObject(sort, sortOrder);
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(sortOrderObj));
+//        return moviesService.searchMovies(query, pageable);
+//    }
     @GetMapping("/search")
-    public Page<Movie> searchMovies(@RequestParam("query") String query,
-                                    @RequestParam int page,
-                                    @RequestParam int size,
-                                    @RequestParam String sort,
-                                    @RequestParam String sortOrder) {
+    public ResponseEntity<?> searchMovies(@RequestParam("query") String query,
+                                          @RequestParam int page,
+                                          @RequestParam int size,
+                                          @RequestParam String sort,
+                                          @RequestParam String sortOrder) {
         Sort.Order sortOrderObj = getSortObject(sort, sortOrder);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortOrderObj));
-        return moviesService.searchMovies(query, pageable);
+        Page<Movie> moviePage = moviesService.searchMovies(query, pageable);
+        return ResponseEntity.ok(Map.of(
+                "movies", moviePage,
+                "currentPage", moviePage.getNumber(),
+                "totalPages", moviePage.getTotalPages()
+        ));
     }
 
     @GetMapping("/current-user")
@@ -184,7 +199,8 @@ public class MoviesController {
                 "movies", moviePage,
                 "currentUserId", userDetails.getId(),
                 "userRole", userDetails.getRole().name(),
-                "currentPage", moviePage.getNumber()
+                "currentPage", moviePage.getNumber(),
+                "totalPages", moviePage.getTotalPages()
         ));
     }
 
@@ -222,7 +238,7 @@ public class MoviesController {
         try {
             String movie = moviesService.getMovieWithMinDirector();
             return ResponseEntity.ok(movie);
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(null);
         }
