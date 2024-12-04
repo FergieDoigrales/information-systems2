@@ -213,11 +213,8 @@ public class MoviesController {
                     .body(Map.of("genre", genre, "count", count));
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of(
-                            "error", "Failed to count movies by genre",
-                            "message", e.getMessage()
-                    ));
+            return ResponseEntity.ok()
+                    .body(Map.of("genre", genre, "count", 0));
         }
     }
 

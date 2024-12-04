@@ -1,6 +1,6 @@
 package com.fergie.lab1.repositories;
 import com.fergie.lab1.models.Movie;
-import com.fergie.lab1.models.Person;
+import com.fergie.lab1.models.enums.MovieGenre;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,16 +19,17 @@ public interface MoviesRepository extends JpaRepository<Movie, Long>, JpaSpecifi
     @NotNull
     Page<Movie> findAll(@NotNull Pageable pageable);
 
-    @Query("SELECT count_movies_by_genre(:genre)")
-    int countMoviesByGenre(@Param("genre") String genre);
+    @Query("SELECT COUNT(m) FROM Movie m WHERE m.genre = :genre")
+    int countMoviesByGenre(@Param("genre") MovieGenre genre);
 
     @Query(value = "SELECT * FROM get_unique_golden_palm_counts()", nativeQuery = true)
     List<Integer> findUniqueGoldenPalmCounts();
 
 //    @Query(value = "SELECT get_movie_with_min_director()", nativeQuery = true)
 //    Optional<Movie> findMovieWithMinDirector();
-    @Query("SELECT get_movie_with_min_director()")
+    @Query(value = "SELECT get_movie_with_min_director()", nativeQuery = true)
     String findMovieWithMinDirector();
+
 
 
 }

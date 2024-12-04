@@ -91,9 +91,11 @@ public class Movie {
     @CreatedBy
     private Long authorID;
 
+    @Column(name = "modified_by")
     @LastModifiedBy
     private String modifiedBy;
 
+    @Column(name = "modified_at")
     @LastModifiedDate
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date modifiedAt;

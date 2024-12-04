@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
+@Table(name = "role_request")
 public class RoleRequest {
     @Column
     @Id
@@ -19,11 +20,11 @@ public class RoleRequest {
     @JoinColumn(name = "username")
     private String username;
 
-    @Column
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private RequestStatus status = RequestStatus.PENDING;
 
-    @Column
+    @Column(name = "request_date")
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date requestDate;
 

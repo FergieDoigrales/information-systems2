@@ -42,8 +42,10 @@ public class MoviesService {
 
 
     public int getMovieCountByGenre(String genre) {
-        return moviesRepository.countMoviesByGenre(genre);
+        MovieGenre mGenre = MovieGenre.valueOf(genre);
+        return moviesRepository.countMoviesByGenre(mGenre);
     }
+
 
     public List<Integer> getUniqueGoldenPalmCounts() {
         return moviesRepository.findUniqueGoldenPalmCounts();
