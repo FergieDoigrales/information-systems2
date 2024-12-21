@@ -27,4 +27,8 @@ public class Location {
 
     @Column(name = "author_id")
     private Long authorID;
+
+    @OneToOne
+    @JoinColumn(name = "details_id")
+    private LocationDetails locationDetails;
 }

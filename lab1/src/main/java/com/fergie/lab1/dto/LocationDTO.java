@@ -1,5 +1,6 @@
 package com.fergie.lab1.dto;
 
+import com.fergie.lab1.models.LocationDetails;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,4 +14,6 @@ public class LocationDTO {
     private float y;
 
     private long z;
+
+    private LocationDetails locationDetails;
 }

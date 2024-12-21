@@ -5,41 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7d7c57ae-b82a-41d7-9314-588d5f88fd3b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/dto/LocationDetailsDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/models/LocationDetails.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/lb1.main.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/.gradle/8.10.2/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/8.10.2/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/.gradle/8.10.2/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/8.10.2/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/resourceHashesCache.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/Lab1Application.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/Lab1Application.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/controllers/MoviesController.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/controllers/MoviesController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/models/Movie.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/models/Movie.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/models/MovieAudit.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/models/MovieAudit.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/models/RoleRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/models/RoleRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/repositories/MoviesRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/repositories/MoviesRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/MoviesService.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/MoviesService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/resources/main/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/resources/main/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/tmp/compileJava/compileTransaction/stash-dir/HomeController.class.uniqueId1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/tmp/compileJava/compileTransaction/stash-dir/MoviesController.class.uniqueId3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/tmp/compileJava/compileTransaction/stash-dir/MoviesService.class.uniqueId2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/tmp/compileJava/compileTransaction/stash-dir/PreparePageService.class.uniqueId0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/Lab1Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/Lab1Application.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/config/EclipseLinkConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/config/EclipseLinkConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/controllers/MoviesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/controllers/MoviesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/models/Movie.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/models/Movie.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/models/MovieAudit.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/models/MovieAudit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/models/RoleRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/models/RoleRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/repositories/MoviesRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/repositories/MoviesRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/MoviesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/MoviesService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/dto/LocationDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/dto/LocationDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/models/Location.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/models/Location.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,37 +65,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;Gradle.Build lab1.executor&quot;: &quot;Run&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;Spring Boot.Lab1Application.executor&quot;: &quot;Run&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;android.gradle.sync.needed&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;K:/git/information-systems/lab1/settings.gradle.kts&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Gradle.Build lab1.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.Lab1Application.executor": "Run",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "K:/git/information-systems/lab1/settings.gradle.kts",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="Lab1Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="lb1.main" />
@@ -159,6 +131,7 @@
       <workItem from="1733273731693" duration="7702000" />
       <workItem from="1733283774303" duration="128000" />
       <workItem from="1733284084804" duration="30000" />
+      <workItem from="1734823959526" duration="151000" />
     </task>
     <servers />
   </component>
