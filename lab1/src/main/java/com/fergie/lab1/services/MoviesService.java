@@ -1,5 +1,6 @@
 package com.fergie.lab1.services;
 
+import com.fergie.lab1.models.ImportAudit;
 import com.fergie.lab1.models.Movie;
 import com.fergie.lab1.models.Person;
 import com.fergie.lab1.models.enums.*;
@@ -51,10 +52,6 @@ public class MoviesService {
         return moviesRepository.findUniqueGoldenPalmCounts();
     }
 
-//    public Movie getMovieWithMinDirector() {
-//        return moviesRepository.findMovieWithMinDirector()
-//                .orElseThrow(() -> new RuntimeException("No movie found with a valid or null director"));
-//    }
     public String getMovieWithMinDirector() {
         return moviesRepository.findMovieWithMinDirector();
     }
@@ -136,5 +133,7 @@ public class MoviesService {
                 ? Sort.Order.desc(sortField)
                 : Sort.Order.asc(sortField);
     }
+
+//    private ImportAudit importMovies()
 
 }

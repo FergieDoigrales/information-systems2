@@ -158,17 +158,6 @@ public class MoviesController {
         }
     }
 
-
-//    @GetMapping("/search")
-//    public Page<Movie> searchMovies(@RequestParam("query") String query,
-//                                    @RequestParam int page,
-//                                    @RequestParam int size,
-//                                    @RequestParam String sort,
-//                                    @RequestParam String sortOrder) {
-//        Sort.Order sortOrderObj = getSortObject(sort, sortOrder);
-//        Pageable pageable = PageRequest.of(page, size, Sort.by(sortOrderObj));
-//        return moviesService.searchMovies(query, pageable);
-//    }
     @GetMapping("/search")
     public ResponseEntity<?> searchMovies(@RequestParam("query") String query,
                                           @RequestParam int page,
