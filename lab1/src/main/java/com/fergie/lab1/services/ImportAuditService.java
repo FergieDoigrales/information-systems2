@@ -21,7 +21,7 @@ public class ImportAuditService {
     }
 
     @Transactional
-    public void saveAudit(ImportAudit importAudit) {
+    public void save(ImportAudit importAudit) {
         importAuditRepository.save(importAudit);
     }
 

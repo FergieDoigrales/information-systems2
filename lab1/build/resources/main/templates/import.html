@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+    <link rel="stylesheet" href="/static/css/home.css">
+</head>
+<body>
+
+
+<h1>Import Movies</h1>
+
+<input type="file" id="fileInput" name="file" />
+<button onclick="importFile()">Import File</button>
+
+<p id="response"></p>
+
+<script>
+    function importFile() {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch("/import/importMovies", {
+            method: "POST",
+            body: formData,
+            headers: {
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("response").innerText = "Imported successfully!";
+            })
+            .catch(error => {
+                document.getElementById("response").innerText = "Error: " + error.message;
+            });
+    }
+</script>
+
+</body>
+</html>
+

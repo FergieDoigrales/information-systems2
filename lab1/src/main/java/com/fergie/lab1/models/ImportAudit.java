@@ -9,6 +9,7 @@ import java.util.Date;
 
 @Getter
 @Setter
+@Table(name = "import_audit")
 @Entity
 public class ImportAudit {
     @Id
@@ -18,6 +19,7 @@ public class ImportAudit {
     @Column(name = "user_id", nullable = false)
     private Long authorID;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ImportStatus status;
 
