@@ -26,12 +26,16 @@ public class ImportAuditService {
         importAuditRepository.save(importAudit);
     }
 
-    public Optional<ImportAudit> findByHash(String hash) {
-        return importAuditRepository.findFirstByFileHash(hash);
+    public Optional<ImportAudit> findByHash(String hash, Long userId) {
+        return importAuditRepository.findFirstByFileHashAndAuthorID(hash, userId);
     }
 
     public Page<ImportAudit> findAll(Pageable pageable) {
         return importAuditRepository.findAll(pageable);
+    }
+
+    public Page<ImportAudit> findAllByAuthorId(Pageable pageable, Long userId) {
+        return importAuditRepository.findAllByAuthorID(pageable, userId);
     }
 
 }

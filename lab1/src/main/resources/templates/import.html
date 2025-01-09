@@ -61,12 +61,31 @@
 </table>
 
 <div class="pagination">
-    <a th:if="${AuditPage.hasPrevious()}" th:href="@{/import/page(page=${AuditPage.number - 1}, size=${AuditPage.size})}">Previous</a>
+    <a th:if="${AuditPage.hasPrevious()}" th:href="@{/import(page=${AuditPage.number - 1}, size=${AuditPage.size})}">Previous</a>
     <span>Page <span th:text="${AuditPage.number + 1}">1</span> of <span th:text="${AuditPage.totalPages}">1</span></span>
-    <a th:if="${AuditPage.hasNext()}" th:href="@{/import/page(page=${AuditPage.number + 1}, size=${AuditPage.size})}">Next</a>
+    <a th:if="${AuditPage.hasNext()}" th:href="@{/import(page=${AuditPage.number + 1}, size=${AuditPage.size})}">Next</a>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 <script>
+    var stompClient = null;
+
+    function connect() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/import-status', function (response) {
+                console.log('Message received:', response.body);
+                const auditData = JSON.parse(response.body);
+                console.log('Message received:', auditData);
+                UpdateImportTable(auditData);
+            });
+        });
+    }
+
     function importFile() {
         const fileInput = document.getElementById("fileInput");
         const file = fileInput.files[0];
@@ -94,11 +113,37 @@
 
         function updateFileName() {
             var fileInput = document.getElementById('fileInput');
-            var fileName = fileInput.files.length > 0 ? fileInput.files[0].name : 'No file chosen';
-            document.getElementById('fileName').textContent = fileName;
+            document.getElementById('fileName').textContent = fileInput.files.length > 0 ? fileInput.files[0].name : 'No file chosen';
     }
+
+    function UpdateImportTable(auditData) {
+        const tableBody = document.querySelector('tbody');
+        tableBody.innerHTML = '';
+
+        auditData.content.forEach(audit => {
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${audit.id}</td>
+                <td>${audit.authorID}</td>
+                <td>${audit.status}</td>
+                <td>${audit.errorRecords}</td>
+                <td>${audit.successRecords}</td>
+                <td>${audit.totalRecords}</td>
+                <td>${new Date(audit.importDate).toLocaleString()}</td>
+                <td>${audit.fileHash}</td>
+            `;
+
+            tableBody.appendChild(row);
+        });
+
+        updatePagination(auditData);
+    }
+
+    window.onload = function () {
+        connect();
+    };
 </script>
 
 </body>
 </html>
-

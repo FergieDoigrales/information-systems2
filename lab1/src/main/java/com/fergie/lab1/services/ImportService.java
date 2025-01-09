@@ -41,7 +41,7 @@ public class ImportService {
 
     @Transactional
     public ImportAudit importFile(MultipartFile file, Long userId, String fileHash) throws IOException {
-        Optional<ImportAudit> existingAudit = importAuditService.findByHash(fileHash);
+        Optional<ImportAudit> existingAudit = importAuditService.findByHash(fileHash, userId);
         if (existingAudit.isPresent()) {
             ImportAudit audit = existingAudit.get();
             if (audit.getErrorRecords() > 0.5 * audit.getTotalRecords()) {
@@ -91,6 +91,7 @@ public class ImportService {
 
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("More than 50% of records are invalid", e);
+
         } catch (Exception e) {
             ImportAudit audit = new ImportAudit();
             audit.setFileHash(fileHash);
