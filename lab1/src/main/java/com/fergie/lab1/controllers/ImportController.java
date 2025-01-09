@@ -71,6 +71,11 @@ public class ImportController {
             importService.importFile(file, userId, fileHash);
             messagingTemplate.convertAndSend("/topic/import-status", getAuditPage(page, size, userDetails));
             return ResponseEntity.ok(new HashMap<String, String>() {{put("message", "Imported successfully");}});
+        } catch (IllegalArgumentException e) {
+            messagingTemplate.convertAndSend("/topic/import-status", getAuditPage(page, size, userDetails));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HashMap<String, String>() {{
+                put("error", "Error: " + e.getMessage());
+            }});
         } catch (Exception e) {
             messagingTemplate.convertAndSend("/topic/import-status", getAuditPage(page, size, userDetails));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new HashMap<String, String>() {{

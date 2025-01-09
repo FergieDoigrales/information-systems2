@@ -89,8 +89,8 @@ public class ImportService {
             }
             return audit;
 
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("More than 50% of records are invalid", e);
+//        } catch (IllegalArgumentException e) {
+//            throw new IllegalArgumentException("More than 50% of records are invalid", e);
 
         } catch (Exception e) {
             ImportAudit audit = new ImportAudit();
@@ -103,7 +103,7 @@ public class ImportService {
             audit.setStatus(ImportStatus.FAILED);
 
             importAuditService.save(audit);
-            throw new RuntimeException("Failed to import file", e);
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
 

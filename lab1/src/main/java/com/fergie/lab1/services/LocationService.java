@@ -38,6 +38,9 @@ public class LocationService {
     @CacheEvict(value = "locationCache", allEntries = true)
     @Transactional
     public Location addLocation(Location location, Long authorId) {
+        if (!isLocationUnique(location.getX(), location.getY(), location.getZ())) {
+            throw new IllegalArgumentException("Location is not unique");
+        }
         return locationRepository.save(enrichLocation(location, authorId));
     }
 
@@ -68,6 +71,10 @@ public class LocationService {
             } //или возвращать null, или кидать исключение
             locationRepository.deleteById(id);
         }
+    }
+
+    private Boolean isLocationUnique(Double x, float y, long z) {
+        return locationRepository.findByXAndYAndZ(x, y, z).isEmpty();
     }
 
     private Location enrichLocation(Location location, Long authorId) { //как получить Id автора

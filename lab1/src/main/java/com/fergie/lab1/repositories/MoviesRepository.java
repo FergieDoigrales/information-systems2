@@ -1,5 +1,6 @@
 package com.fergie.lab1.repositories;
 import com.fergie.lab1.models.Movie;
+import com.fergie.lab1.models.Person;
 import com.fergie.lab1.models.enums.MovieGenre;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,8 @@ public interface MoviesRepository extends JpaRepository<Movie, Long>, JpaSpecifi
     Optional<Movie> findByName(String name);
     @NotNull
     Page<Movie> findAll(@NotNull Pageable pageable);
+
+    Optional<Movie> findFirstByNameAndOperator(String name, Person operator);
 
     @Query("SELECT COUNT(m) FROM Movie m WHERE m.genre = :genre")
     int countMoviesByGenre(@Param("genre") MovieGenre genre);

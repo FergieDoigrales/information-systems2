@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface PeopleRepository extends JpaRepository<Person, Long> {
     Optional<Person> findByName(String name);
 
+    Optional<Person> findFirstByPassportID(String passportID);
+
     @Query(value = "SELECT * FROM get_screenwriters_without_oscar()", nativeQuery = true)
     List<Person> findScreenwritersWithoutOscar();
 

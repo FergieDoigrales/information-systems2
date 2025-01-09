@@ -11,7 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
             })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
+                        return response.json().then(errData => {
+                            throw new Error(errData.message || `HTTP error! Status: ${response.status}`);
+                        });
                     }
                     return response.json();
                 })
@@ -24,7 +26,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 })
                 .catch(error => {
-                    console.error("Error saving location:", error);
+                    alert(error.message || "Failed to save location.");
+                    console.error("Error saving location:", error, error.message);
                 });
         });
 

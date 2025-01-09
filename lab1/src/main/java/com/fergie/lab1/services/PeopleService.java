@@ -46,6 +46,9 @@ public class PeopleService {
     @CacheEvict(value = "peopleCache", allEntries = true)
     @Transactional
     public Person addPerson(Person person, Long authorId) {
+        if (!isPassportUnique(person.getPassportID())) {
+            throw new IllegalArgumentException("Passport ID is not unique");
+        }
         return peopleRepository.save(enrichPerson(person, authorId));
     }
 
@@ -82,6 +85,10 @@ public class PeopleService {
             } //или возвращать null, или кидать исключение
             peopleRepository.deleteById(id);
         }
+    }
+
+    private Boolean isPassportUnique(String passportID) {
+        return peopleRepository.findFirstByPassportID(passportID).isEmpty();
     }
 
     private Person enrichPerson(Person person, Long authorId) { //как получить Id автора

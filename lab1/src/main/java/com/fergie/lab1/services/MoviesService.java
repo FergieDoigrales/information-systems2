@@ -77,15 +77,22 @@ public class MoviesService {
 
     @Transactional
     public void saveAll(List<Movie> movies) {
+        for (Movie movie : movies) {
+            if (!isUnique(movie.getName(), movie.getOperator())) {
+                throw new IllegalArgumentException("Movie with name " + movie.getName() + " and operator " + movie.getOperator().getName() + " already exists");
+            }
+        }
         moviesRepository.saveAll(movies);
     }
 
     @CacheEvict(value = "moviesCache", allEntries = true)
     @Transactional
     public void addMovie(Movie movie, Long authorID) {
+        if (!isUnique(movie.getName(), movie.getDirector())) {
+            throw new IllegalArgumentException("Movie with such name and director already exists");
+        }
         Movie addedMovie = moviesRepository.save(enrichMovie(movie, authorID));
         movieAuditService.recordMovieChange(addedMovie, "CREATE", "name", movie.getName(), movie.getName(), String.valueOf(authorID));
-
     }
 
     @CacheEvict(value = "moviesCache", allEntries = true)
@@ -301,6 +308,10 @@ public class MoviesService {
         } catch (Exception e ) {
             return null;
         }
+    }
+
+    private Boolean isUnique(String name, Person operator) {
+        return moviesRepository.findFirstByNameAndOperator(name, operator).isEmpty();
     }
 
 

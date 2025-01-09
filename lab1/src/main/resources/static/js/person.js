@@ -28,7 +28,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "POST",
                 body: formData,
             })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errData => {
+                            throw new Error(errData.message || `HTTP error! Status: ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         document.getElementById("createPersonModal").style.display = "none";
@@ -51,7 +58,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 })
                 .catch(error => {
-                    console.error("Error saving person:", error);
+                    alert("Failed to save person." || error.message);
+                    console.error("Error saving person:", error, error.message);
                 });
         });
 

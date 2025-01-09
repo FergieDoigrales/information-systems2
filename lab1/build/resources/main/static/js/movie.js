@@ -63,7 +63,9 @@ document.addEventListener("DOMContentLoaded", function () {
             })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
+                        return response.json().then(errData => {
+                            throw new Error(errData.message || `HTTP error! Status: ${response.status}`);
+                        });
                     }
                     return response.json();
                 })
@@ -76,7 +78,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 })
                 .catch(error => {
-                    console.error("Error saving movie:", error);
+                    alert(error.message || "Failed to save movie.");
+                    console.error("Error saving movie:", error, error.message);
                 });
         });
     }

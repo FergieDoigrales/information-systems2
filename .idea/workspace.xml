@@ -12,21 +12,35 @@
       <change beforePath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/8.10.2/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/controllers/ImportController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/controllers/ImportController$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/controllers/ImportController$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/controllers/ImportController$2.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/controllers/ImportController.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/controllers/ImportController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/repositories/ImportAuditRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/repositories/ImportAuditRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/ImportAuditService.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/ImportAuditService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/repositories/LocationRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/repositories/LocationRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/repositories/MoviesRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/repositories/MoviesRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/repositories/PeopleRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/repositories/PeopleRepository.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/ImportService.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/ImportService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/LocationService.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/LocationService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/MoviesService.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/MoviesService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/PeopleService.class" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/classes/java/main/com/fergie/lab1/services/PeopleService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/resources/main/static/js/location.js" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/resources/main/static/js/location.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/resources/main/static/js/movie.js" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/resources/main/static/js/movie.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/resources/main/static/js/person.js" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/resources/main/static/js/person.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/build/resources/main/templates/import.html" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/resources/main/templates/import.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/build/tmp/compileJava/compileTransaction/stash-dir/ImportController$1.class.uniqueId0" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/tmp/compileJava/compileTransaction/stash-dir/ImportController$1.class.uniqueId0" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/tmp/compileJava/compileTransaction/stash-dir/ImportController$2.class.uniqueId2" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/tmp/compileJava/compileTransaction/stash-dir/ImportController$2.class.uniqueId2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/build/tmp/compileJava/compileTransaction/stash-dir/ImportController.class.uniqueId1" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/tmp/compileJava/compileTransaction/stash-dir/ImportController.class.uniqueId1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/tmp/compileJava/compileTransaction/stash-dir/ImportController$2.class.uniqueId2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/build/tmp/compileJava/compileTransaction/stash-dir/ImportController.class.uniqueId1" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/controllers/ImportController.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/controllers/ImportController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/repositories/ImportAuditRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/repositories/ImportAuditRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/ImportAuditService.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/ImportAuditService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/repositories/LocationRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/repositories/LocationRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/repositories/MoviesRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/repositories/MoviesRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/repositories/PeopleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/repositories/PeopleRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/ImportService.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/ImportService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/LocationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/LocationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/MoviesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/MoviesService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/PeopleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/java/com/fergie/lab1/services/PeopleService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/resources/static/js/location.js" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/resources/static/js/location.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/resources/static/js/movie.js" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/resources/static/js/movie.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab1/src/main/resources/static/js/person.js" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/resources/static/js/person.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lab1/src/main/resources/templates/import.html" beforeDir="false" afterPath="$PROJECT_DIR$/lab1/src/main/resources/templates/import.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -151,7 +165,7 @@
       <workItem from="1736274126441" duration="57000" />
       <workItem from="1736274205129" duration="135000" />
       <workItem from="1736274369098" duration="5980000" />
-      <workItem from="1736280853567" duration="64344000" />
+      <workItem from="1736280853567" duration="72032000" />
     </task>
     <servers />
   </component>
