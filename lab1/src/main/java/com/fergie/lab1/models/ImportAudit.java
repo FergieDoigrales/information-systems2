@@ -23,7 +23,7 @@ public class ImportAudit {
     @Column(name = "status")
     private ImportStatus status;
 
-    @Column(name = "file_hash", nullable = false, unique = true)
+    @Column(name = "file_hash", nullable = false) //?????? ?? Unique?
     private String fileHash;
 
     @Temporal(TemporalType.TIMESTAMP)

@@ -1,16 +1,11 @@
 package com.fergie.lab1.services;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fergie.lab1.dto.MovieDTO;
 import com.fergie.lab1.models.*;
 import com.fergie.lab1.models.enums.*;
 import com.fergie.lab1.repositories.MoviesRepository;
 import com.fergie.lab1.specification.MovieSpecification;
-import jakarta.persistence.Column;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import org.eclipse.persistence.exceptions.ValidationException;
+import com.fergie.lab1.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,10 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,19 +22,16 @@ import java.util.Optional;
 public class MoviesService {
     private final MoviesRepository moviesRepository;
     private final MovieAuditService movieAuditService;
-    private final ImportAuditService importAuditService;
     private final CoordinatesService coordinatesService;
     private final PeopleService peopleService;
     private final LocationService locationService;
     private final LocationDetailsService locationDetailsService;
 
     @Autowired
-    public MoviesService(MoviesRepository moviesRepository, MovieAuditService movieAuditService,
-                         ImportAuditService importAuditService, CoordinatesService coordinatesService,
+    public MoviesService(MoviesRepository moviesRepository, MovieAuditService movieAuditService, CoordinatesService coordinatesService,
                          PeopleService peopleService, LocationService locationService, LocationDetailsService locationDetailsService) {
         this.moviesRepository = moviesRepository;
         this.movieAuditService = movieAuditService;
-        this.importAuditService = importAuditService;
         this.coordinatesService = coordinatesService;
         this.peopleService = peopleService;
         this.locationService = locationService;
@@ -87,6 +75,11 @@ public class MoviesService {
         return moviesRepository.findAll(pageable);
     }
 
+    @Transactional
+    public void saveAll(List<Movie> movies) {
+        moviesRepository.saveAll(movies);
+    }
+
     @CacheEvict(value = "moviesCache", allEntries = true)
     @Transactional
     public void addMovie(Movie movie, Long authorID) {
@@ -106,7 +99,7 @@ public class MoviesService {
             System.out.println("Movie author ID: " + movie.getAuthorID());
             if (!authorID.equals(movie.getAuthorID()) && !userRole.equals(AccessRole.ADMIN)) {
                 throw new IllegalArgumentException("Author ID does not match and user is not an admin");
-            } //или возвращать null, или кидать исключение
+            }
             movieAuditService.recordMovieChange(movie, "UPDATE", "name", movie.getName(), updatedMovie.getName(), String.valueOf(authorID));
             movie.setName(updatedMovie.getName());
             movie.setName(updatedMovie.getName());
@@ -142,164 +135,171 @@ public class MoviesService {
         moviesRepository.deleteById(id);
     }
 
-    @Transactional
-    public ImportAudit importFile(MultipartFile file, Long userId, String fileHash) throws IOException {
-        Optional<ImportAudit> existingAudit = importAuditService.findByHash(fileHash);
-        if (existingAudit.isPresent()) {
-            ImportAudit audit = existingAudit.get();
-            if (audit.getErrorRecords() > 0.5 * audit.getTotalRecords()) {
-                throw new IllegalArgumentException("This file was previously rejected (more than 50% errors)");
-            }
-        }
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        int totalRecords = 0;
-        int errorRecords = 0;
-        int validRecords = 0;
-
+    public Movie processMovieDTO(MovieDTO movieDTO, Long userId) {
         try {
-            List<MovieDTO> movieDTOList = objectMapper.readValue(file.getInputStream(), new TypeReference<List<MovieDTO>>() {
-            });
+            Movie movie = new Movie();
+            movie.setName(movieDTO.getName());
+            movie.setOscarsCount(movieDTO.getOscarsCount());
+            movie.setBudget(movieDTO.getBudget());
+            movie.setTotalBoxOffice(movieDTO.getTotalBoxOffice());
+            movie.setMpaaRating(MpaaRating.valueOf(String.valueOf(movieDTO.getMpaaRating())));
+            movie.setLength(movieDTO.getLength());
+            movie.setGoldenPalmCount(movieDTO.getGoldenPalmCount());
+            movie.setGenre(MovieGenre.valueOf(String.valueOf(movieDTO.getGenre())));
+            movie.setAuthorID(userId);
 
-            for (MovieDTO movieDTO : movieDTOList) {
-                totalRecords++;
-
-                try {
-
-                    Movie movie = new Movie();
-                    movie.setName(movieDTO.getName());
-                    movie.setOscarsCount(movieDTO.getOscarsCount());
-                    movie.setBudget(movieDTO.getBudget());
-                    movie.setTotalBoxOffice(movieDTO.getTotalBoxOffice());
-                    movie.setMpaaRating(MpaaRating.valueOf(String.valueOf(movieDTO.getMpaaRating())));
-                    movie.setLength(movieDTO.getLength());
-                    movie.setGoldenPalmCount(movieDTO.getGoldenPalmCount());
-                    movie.setGenre(MovieGenre.valueOf(String.valueOf(movieDTO.getGenre())));
-                    movie.setAuthorID(userId);
-
-                    if (movieDTO.getCoordinates().getId() != null) {
-                        movie.setCoordinates(coordinatesService.findById(movieDTO.getCoordinates().getId()));
+            if (movieDTO.getCoordinates().getId() != null) {
+                movie.setCoordinates(coordinatesService.findById(movieDTO.getCoordinates().getId()));
+            } else {
+                Coordinates coordinates = new Coordinates();
+                coordinates.setX(movieDTO.getCoordinates().getX());
+                coordinates.setY(movieDTO.getCoordinates().getY());
+                if (CoordinatesValidator.validateCoordinates(coordinates)) {
+                    movie.setCoordinates(coordinates);
+                } else {
+                    throw new IllegalArgumentException("Invalid coordinates data");
+                }
+            }
+            if (movieDTO.getDirector() != null) {
+                if (movieDTO.getDirector().getId() != null) {
+                    movie.setDirector(peopleService.findById(movieDTO.getDirector().getId()));
+                } else {
+                    Person director = new Person();
+                    director.setName(movieDTO.getDirector().getName());
+                    director.setPassportID(movieDTO.getDirector().getPassportID());
+                    director.setHairColor(Color.valueOf(String.valueOf(movieDTO.getDirector().getHairColor())));
+                    director.setEyeColor(Color.valueOf(String.valueOf(movieDTO.getDirector().getEyeColor())));
+                    director.setNationality(Country.valueOf(String.valueOf(movieDTO.getDirector().getNationality())));
+                    if (movieDTO.getDirector().getLocation().getId() != null) {
+                        director.setLocation(locationService.findById(movieDTO.getDirector().getLocation().getId()));
                     } else {
-                        Coordinates coordinates = new Coordinates();
-                        coordinates.setX(movieDTO.getCoordinates().getX());
-                        coordinates.setY(movieDTO.getCoordinates().getY());
-                        movie.setCoordinates(coordinatesService.addCoordinates(coordinates, userId));
-                    }
-
-                    if (movieDTO.getDirector().getId() != null) {
-                        movie.setDirector(peopleService.findById(movieDTO.getDirector().getId()));
-                    } else {
-                        Person director = new Person();
-                        director.setName(movieDTO.getDirector().getName());
-                        director.setPassportID(movieDTO.getDirector().getPassportID());
-                        director.setHairColor(Color.valueOf(String.valueOf(movieDTO.getDirector().getHairColor())));
-                        director.setEyeColor(Color.valueOf(String.valueOf(movieDTO.getDirector().getEyeColor())));
-                        director.setNationality(Country.valueOf(String.valueOf(movieDTO.getDirector().getNationality())));
-                        if (movieDTO.getDirector().getLocation().getId() != null) {
-                            director.setLocation(locationService.findById(movieDTO.getDirector().getLocation().getId()));
+                        Location newLocation = new Location();
+                        newLocation.setY(movieDTO.getDirector().getLocation().getY());
+                        newLocation.setX(movieDTO.getDirector().getLocation().getX());
+                        newLocation.setZ(movieDTO.getDirector().getLocation().getZ());
+                        if (movieDTO.getDirector().getLocation().getLocationDetails().getId() != null) {
+                            System.out.println("Не налл");
+                            newLocation.setLocationDetails(locationDetailsService.findById(movieDTO.getDirector().getLocation().getLocationDetails().getId()));
                         } else {
-                            Location newLocation = new Location();
-                            newLocation.setY(movieDTO.getDirector().getLocation().getY());
-                            newLocation.setX(movieDTO.getDirector().getLocation().getX());
-                            newLocation.setZ(movieDTO.getDirector().getLocation().getZ());
-                            if (movieDTO.getDirector().getLocation().getLocationDetails().getId() != null){
-                                newLocation.setLocationDetails(locationDetailsService.findById(movieDTO.getDirector().getLocation().getLocationDetails().getId()));
+                            LocationDetails locationDetails = new LocationDetails();
+                            locationDetails.setAddress(movieDTO.getDirector().getLocation().getLocationDetails().getAddress());
+                            locationDetails.setDescription(movieDTO.getDirector().getLocation().getLocationDetails().getDescription());
+                            if (LocationDetailsValidator.isValidLocationDetails(locationDetails)) {
+                                newLocation.setLocationDetails(locationDetails);
                             } else {
-                                LocationDetails locationDetails = new LocationDetails();
-                                locationDetails.setAddress(movieDTO.getDirector().getLocation().getLocationDetails().getAddress());
-                                locationDetails.setDescription(movieDTO.getDirector().getLocation().getLocationDetails().getDescription());
-                                newLocation.setLocationDetails(locationDetailsService.save(locationDetails));
+                                throw new IllegalArgumentException("Invalid location details data");
                             }
-                            director.setLocation(locationService.addLocation(newLocation, userId));
                         }
-                        movie.setDirector(peopleService.addPerson(director, userId));
-                    }
-
-                    if (movieDTO.getScreenwriter().getId() != null) {
-                        movie.setScreenwriter(peopleService.findById(movieDTO.getScreenwriter().getId()));
-                    } else {
-                        Person screenwriter = new Person();
-                        screenwriter.setName(movieDTO.getScreenwriter().getName());
-                        screenwriter.setPassportID(movieDTO.getScreenwriter().getPassportID());
-                        screenwriter.setHairColor(Color.valueOf(String.valueOf(movieDTO.getScreenwriter().getHairColor())));
-                        screenwriter.setEyeColor(Color.valueOf(String.valueOf(movieDTO.getScreenwriter().getEyeColor())));
-                        screenwriter.setNationality(Country.valueOf(String.valueOf(movieDTO.getScreenwriter().getNationality())));
-                        if (movieDTO.getScreenwriter().getLocation().getId() != null) {
-                            screenwriter.setLocation(locationService.findById(movieDTO.getScreenwriter().getLocation().getId()));
+                        if (LocationValidator.validateLocation(newLocation)) {
+                            director.setLocation(newLocation);
                         } else {
-                            Location newLocation = new Location();
-                            newLocation.setY(movieDTO.getScreenwriter().getLocation().getY());
-                            newLocation.setX(movieDTO.getScreenwriter().getLocation().getX());
-                            newLocation.setZ(movieDTO.getScreenwriter().getLocation().getZ());
-                            if (movieDTO.getScreenwriter().getLocation().getLocationDetails().getId() != null){
-                                newLocation.setLocationDetails(locationDetailsService.findById(movieDTO.getScreenwriter().getLocation().getLocationDetails().getId()));
-                            } else {
-                                LocationDetails locationDetails = new LocationDetails();
-                                locationDetails.setAddress(movieDTO.getScreenwriter().getLocation().getLocationDetails().getAddress());
-                                locationDetails.setDescription(movieDTO.getScreenwriter().getLocation().getLocationDetails().getDescription());
-                                newLocation.setLocationDetails(locationDetailsService.save(locationDetails));
-                            }
-                            screenwriter.setLocation(locationService.addLocation(newLocation, userId));
+                            throw new IllegalArgumentException("Invalid location data");
                         }
-                        movie.setScreenwriter(peopleService.addPerson(screenwriter, userId));
+
                     }
-
-
-                    if (movieDTO.getOperator().getId() != null) {
-                        movie.setOperator(peopleService.findById(movieDTO.getOperator().getId()));
+                    if (PersonValidator.isPersonValid(director)) {
+                        movie.setDirector(director);
                     } else {
-                        Person operator = new Person();
-                        operator.setName(movieDTO.getOperator().getName());
-                        operator.setPassportID(movieDTO.getOperator().getPassportID());
-                        operator.setHairColor(Color.valueOf(String.valueOf(movieDTO.getOperator().getHairColor())));
-                        operator.setEyeColor(Color.valueOf(String.valueOf(movieDTO.getOperator().getEyeColor())));
-                        operator.setNationality(Country.valueOf(String.valueOf(movieDTO.getOperator().getNationality())));
-                        if (movieDTO.getOperator().getLocation().getId() != null) {
-                            operator.setLocation(locationService.findById(movieDTO.getOperator().getLocation().getId()));
-                        } else {
-                            Location newLocation = new Location();
-                            newLocation.setY(movieDTO.getOperator().getLocation().getY());
-                            newLocation.setX(movieDTO.getOperator().getLocation().getX());
-                            newLocation.setZ(movieDTO.getOperator().getLocation().getZ());
-                            if (movieDTO.getOperator().getLocation().getLocationDetails().getId() != null){
-                                newLocation.setLocationDetails(locationDetailsService.findById(movieDTO.getDirector().getLocation().getLocationDetails().getId()));
-                            } else {
-                                LocationDetails locationDetails = new LocationDetails();
-                                locationDetails.setAddress(movieDTO.getOperator().getLocation().getLocationDetails().getAddress());
-                                locationDetails.setDescription(movieDTO.getOperator().getLocation().getLocationDetails().getDescription());
-                                newLocation.setLocationDetails(locationDetailsService.save(locationDetails));
-                            }
-                            operator.setLocation(locationService.addLocation(newLocation, userId));
-                        }
-                        movie.setOperator(peopleService.addPerson(operator, userId));
+                        throw new IllegalArgumentException("Invalid person data");
                     }
 
-                    moviesRepository.save(movie);
-                    validRecords++;
-                } catch (Exception e) {
-                    errorRecords++;
+                }
+            } else {
+                movie.setDirector(null);
+            }
+            if (movieDTO.getScreenwriter() != null) {
+                if (movieDTO.getScreenwriter().getId() != null) {
+                    movie.setScreenwriter(peopleService.findById(movieDTO.getScreenwriter().getId()));
+                } else {
+                    Person screenwriter = new Person();
+                    screenwriter.setName(movieDTO.getScreenwriter().getName());
+                    screenwriter.setPassportID(movieDTO.getScreenwriter().getPassportID());
+                    screenwriter.setHairColor(Color.valueOf(String.valueOf(movieDTO.getScreenwriter().getHairColor())));
+                    screenwriter.setEyeColor(Color.valueOf(String.valueOf(movieDTO.getScreenwriter().getEyeColor())));
+                    screenwriter.setNationality(Country.valueOf(String.valueOf(movieDTO.getScreenwriter().getNationality())));
+                    if (movieDTO.getScreenwriter().getLocation().getId() != null) {
+                        screenwriter.setLocation(locationService.findById(movieDTO.getScreenwriter().getLocation().getId()));
+                    } else {
+                        Location newLocation = new Location();
+                        newLocation.setY(movieDTO.getScreenwriter().getLocation().getY());
+                        newLocation.setX(movieDTO.getScreenwriter().getLocation().getX());
+                        newLocation.setZ(movieDTO.getScreenwriter().getLocation().getZ());
+                        if (movieDTO.getScreenwriter().getLocation().getLocationDetails().getId() != null) {
+                            newLocation.setLocationDetails(locationDetailsService.findById(movieDTO.getScreenwriter().getLocation().getLocationDetails().getId()));
+                        } else {
+                            LocationDetails locationDetails = new LocationDetails();
+                            locationDetails.setAddress(movieDTO.getScreenwriter().getLocation().getLocationDetails().getAddress());
+                            locationDetails.setDescription(movieDTO.getScreenwriter().getLocation().getLocationDetails().getDescription());
+                            if (LocationDetailsValidator.isValidLocationDetails(locationDetails)) {
+                                newLocation.setLocationDetails(locationDetails);
+                            } else {
+                                throw new IllegalArgumentException("Invalid location details data");
+                            }
+                        }
+                        if (LocationValidator.validateLocation(newLocation)) {
+                            screenwriter.setLocation(newLocation);
+                        } else {
+                            throw new IllegalArgumentException("Invalid location data");
+                        }
+                    }
+                    if (PersonValidator.isPersonValid(screenwriter)) {
+                        movie.setScreenwriter(screenwriter);
+
+                    } else {
+                        throw new IllegalArgumentException("Invalid person data");
+                    }
+                }
+            } else {
+                movie.setScreenwriter(null);
+            }
+            if (movieDTO.getOperator().getId() != null) {
+                movie.setOperator(peopleService.findById(movieDTO.getOperator().getId()));
+            } else {
+                Person operator = new Person();
+                operator.setName(movieDTO.getOperator().getName());
+                operator.setPassportID(movieDTO.getOperator().getPassportID());
+                operator.setHairColor(Color.valueOf(String.valueOf(movieDTO.getOperator().getHairColor())));
+                operator.setEyeColor(Color.valueOf(String.valueOf(movieDTO.getOperator().getEyeColor())));
+                operator.setNationality(Country.valueOf(String.valueOf(movieDTO.getOperator().getNationality())));
+                if (movieDTO.getOperator().getLocation().getId() != null) {
+                    operator.setLocation(locationService.findById(movieDTO.getOperator().getLocation().getId()));
+                } else {
+                    Location newLocation = new Location();
+                    newLocation.setY(movieDTO.getOperator().getLocation().getY());
+                    newLocation.setX(movieDTO.getOperator().getLocation().getX());
+                    newLocation.setZ(movieDTO.getOperator().getLocation().getZ());
+                    if (movieDTO.getOperator().getLocation().getLocationDetails().getId() != null) {
+                        newLocation.setLocationDetails(locationDetailsService.findById(movieDTO.getOperator().getLocation().getLocationDetails().getId()));
+                    } else {
+                        LocationDetails locationDetails = new LocationDetails();
+                        locationDetails.setAddress(movieDTO.getOperator().getLocation().getLocationDetails().getAddress());
+                        locationDetails.setDescription(movieDTO.getOperator().getLocation().getLocationDetails().getDescription());
+                        if (LocationDetailsValidator.isValidLocationDetails(locationDetails)) {
+                            newLocation.setLocationDetails(locationDetails);
+                        } else {
+                            throw new IllegalArgumentException("Invalid location details data");
+                        }
+                    }
+                    if (LocationValidator.validateLocation(newLocation)) {
+                        operator.setLocation(newLocation);
+                    } else {
+                        throw new IllegalArgumentException("Invalid location data");
+                    }
+                }
+                if (PersonValidator.isPersonValid(operator)) {
+                    movie.setOperator(operator);
+                } else {
+                    throw new IllegalArgumentException("Invalid person data");
                 }
             }
 
-
-            ImportAudit audit = new ImportAudit();
-            audit.setFileHash(fileHash);
-            audit.setAuthorID(userId);
-            audit.setTotalRecords(totalRecords);
-            audit.setSuccessRecords(validRecords);
-            audit.setErrorRecords(errorRecords);
-            audit.setImportDate(new Date());
-            audit.setStatus(validRecords >= 0.5 * totalRecords ? ImportStatus.SUCCESS : ImportStatus.FAILED);
-
-
-            importAuditService.save(audit);
-
-            if (validRecords < 0.5 * totalRecords) {
-                throw new IllegalArgumentException("Less than 50% valid records, import failed.");
+            if (MovieValidator.validateMovie(movie)) {
+                return movie;
+            } else {
+                throw new IllegalArgumentException("Invalid movie data");
             }
-            return audit;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to import file", e); //как-то обработать потом
+        } catch (Exception e ) {
+            return null;
         }
     }
 

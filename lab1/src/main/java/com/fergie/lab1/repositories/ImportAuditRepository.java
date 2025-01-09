@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface ImportAuditRepository extends JpaRepository<ImportAudit, Long> {
     Optional<ImportAudit> findByFileHash(String hash);
+
+    Optional<ImportAudit> findFirstByFileHash(String hash);
 }

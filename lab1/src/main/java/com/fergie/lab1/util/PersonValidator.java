@@ -1,16 +1,8 @@
 package com.fergie.lab1.util;
 
-import com.fergie.lab1.models.Location;
+
 import com.fergie.lab1.models.Person;
-import com.fergie.lab1.models.User;
-import com.fergie.lab1.models.enums.Color;
-import com.fergie.lab1.models.enums.Country;
 import com.fergie.lab1.repositories.PeopleRepository;
-import com.fergie.lab1.repositories.UsersRepository;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -55,5 +47,29 @@ public class PersonValidator implements Validator {
             errors.rejectValue("nationality", "", "Nationality cannot be null.");
 
         }
+    }
+
+    public static boolean isPersonValid(Person person) {
+        if (person.getName() == null || person.getName().isEmpty()) {
+            System.out.println("Name cannot be null or empty.");
+            return false;
+        }
+        if (person.getEyeColor() == null) {
+            System.out.println("Eye color cannot be null.");
+            return false;
+        }
+        if (person.getLocation() == null) {
+            System.out.println("Location cannot be null.");
+            return false;
+        }
+        if (person.getPassportID() == null || person.getPassportID().length() < 10 || person.getPassportID().length() > 43) {
+            System.out.println("Passport ID length must be between 10 and 43.");
+            return false;
+        }
+        if (person.getNationality() == null) {
+            System.out.println("Nationality cannot be null.");
+            return false;
+        }
+        return true;
     }
 }

@@ -26,7 +26,7 @@ public class UserValidator implements Validator {
     public void validate(Object target, Errors errors) {
         User user = (User) target; //downcast??
 
-        if (usersRepository.findByUsername(user.getUsername()).isPresent()){ //isPresent - true, если значение есть
+        if (usersRepository.findByUsername(user.getUsername()).isPresent()){
             errors.rejectValue("username", "", "This username is already taken.");
         }
 

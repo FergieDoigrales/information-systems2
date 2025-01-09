@@ -19,12 +19,11 @@ import java.util.Base64;
 @RequestMapping("/import")
 public class ImportController {
 
-    private final MoviesService moviesService;
-
+    private final ImportService importService;
 
     @Autowired
-    public ImportController(MoviesService moviesService) {
-        this.moviesService = moviesService;
+    public ImportController(ImportService importService) {
+        this.importService = importService;
     }
 
     @GetMapping("/page")
@@ -39,7 +38,7 @@ public class ImportController {
 
         String fileHash = calculateHash(file);
         try {
-            moviesService.importFile(file, userId, fileHash);
+            importService.importFile(file, userId, fileHash);
             return ResponseEntity.ok("Imported successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errors: " + e.getMessage());
