@@ -3,16 +3,68 @@
 <head>
     <title>Home</title>
     <link rel="stylesheet" href="/static/css/home.css">
+    <link rel="stylesheet" href="/static/css/import.css">
 </head>
 <body>
+<div class="header">
+    <h1> <a th:href="@{/home}" style="cursor: pointer; color: hotpink; text-decoration: none;">MovieStorage</a></h1>
+    <h1> <a th:href="@{/import}" style="cursor: pointer; color: hotpink; text-decoration: none;">Import</a></h1>
+    <h1> <a th:href="@{/operations}" style="cursor: pointer; color: hotpink; text-decoration: none;">Operations</a></h1>
+    <div class="user-info">
+        <span th:text="${userRole}"
+              class="open-modal"
+              data-modal="roleRequestModal"
+              style="cursor: pointer; text-decoration: underline; color: hotpink;">Role</span>
+        <span th:text="${username}">Username</span>
+        <a th:href="@{/auth/logout}">Logout</a>
+        <a th:if="${userRole == 'ADMIN'}"
+           th:href="@{/admin/audit}">Admin Panel</a>
+    </div>
+</div>
+
+<div class="upload">
+    <input type="file" id="fileInput" name="file" style="display: none;" onchange="updateFileName()" />
+    <button class="choose-file-button" onclick="document.getElementById('fileInput').click();">Choose file</button>
+    <span id="fileName">No file chosen</span>
+    <button class="choose-file-button" onclick="importFile()" style="margin-left: 20px">Import File</button>
+</div>
 
 
-<h1>Import Movies</h1>
-
-<input type="file" id="fileInput" name="file" />
-<button onclick="importFile()">Import File</button>
 
 <p id="response"></p>
+
+<table class="styled-table">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Author</th>
+        <th>Status</th>
+        <th>Errors</th>
+        <th>Success</th>
+        <th>Total</th>
+        <th>Date</th>
+        <th>Hash</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="audit : ${AuditPage.content}">
+        <td th:text="${audit.id}">id</td>
+        <td th:text="${audit.authorID}">Author</td>
+        <td th:text="${audit.status}">Status</td>
+        <td th:text="${audit.errorRecords}">Errors</td>
+        <td th:text="${audit.successRecords}">Success</td>
+        <td th:text="${audit.totalRecords}">Total</td>
+        <td th:text="${audit.importDate}">Date</td>
+        <td th:text="${audit.fileHash}">Hash</td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="pagination">
+    <a th:if="${AuditPage.hasPrevious()}" th:href="@{/import/page(page=${AuditPage.number - 1}, size=${AuditPage.size})}">Previous</a>
+    <span>Page <span th:text="${AuditPage.number + 1}">1</span> of <span th:text="${AuditPage.totalPages}">1</span></span>
+    <a th:if="${AuditPage.hasNext()}" th:href="@{/import/page(page=${AuditPage.number + 1}, size=${AuditPage.size})}">Next</a>
+</div>
 
 <script>
     function importFile() {
@@ -25,16 +77,25 @@
         fetch("/import/importMovies", {
             method: "POST",
             body: formData,
-            headers: {
-            }
+            headers: {}
         })
             .then(response => response.json())
             .then(data => {
-                document.getElementById("response").innerText = "Imported successfully!";
+                if (data.message) {
+                    document.getElementById("response").innerText = data.message;
+                } else if (data.error) {
+                    document.getElementById("response").innerText = data.error;
+                }
             })
             .catch(error => {
                 document.getElementById("response").innerText = "Error: " + error.message;
             });
+    }
+
+        function updateFileName() {
+            var fileInput = document.getElementById('fileInput');
+            var fileName = fileInput.files.length > 0 ? fileInput.files[0].name : 'No file chosen';
+            document.getElementById('fileName').textContent = fileName;
     }
 </script>
 

@@ -63,13 +63,12 @@ public class ImportService {
                 totalRecords++;
 
                 Movie movie = moviesService.processMovieDTO(movieDTO, userId);
-                if (movie != null){
+                if (movie != null) {
                     movies.add(saveMovieRelatedEntities(movie, userId));
                     validRecords++;
                 } else {
                     errorRecords++;
                 }
-
             }
 
             ImportAudit audit = new ImportAudit();
@@ -85,9 +84,13 @@ public class ImportService {
 
             if (errorRecords < 0.5 * totalRecords) {
                 moviesService.saveAll(movies);
+            } else {
+                throw new IllegalArgumentException("More than 50% of records are invalid");
             }
             return audit;
 
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("More than 50% of records are invalid", e);
         } catch (Exception e) {
             ImportAudit audit = new ImportAudit();
             audit.setFileHash(fileHash);

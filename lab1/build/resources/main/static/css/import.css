@@ -1,0 +1,66 @@
+.button {
+    background-color: #ff8de1;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 20px;
+}
+.upload {
+    width: 100%;
+    height: fit-content;
+    margin-top: 20px;
+}
+.icon-button {
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+.icon-button img {
+    width: 24px;
+    height: 24px;
+}
+.icon-button:hover {
+    opacity: 0.7;
+}
+
+.icon-button .icon {
+    height: 24px;
+    width: 24px;
+    background-image: url("static/pic/upl.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    mask-image: url("static/pic/upl.svg");
+    mask-size: contain;
+}
+
+.choose-file-button {
+    background-color: #ff69b4;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s ease;
+}
+
+.choose-file-button:hover {
+    background-color: #ff6999;
+    transform: scale(1.05);
+}
+
+.choose-file-button:active {
+    background-color: #ff7999;
+    transform: scale(1);
+}
+
+#fileName {
+    font-size: 16px;
+    margin-left: 10px;
+}
